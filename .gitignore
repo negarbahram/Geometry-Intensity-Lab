@@ -5,3 +5,5 @@ cache/
 third_party/
 outputs/
 examples_run.log
+cpp/third_party/
+cpp/build/

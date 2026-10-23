@@ -7,6 +7,7 @@ AIxAM repository and the image datasets are only read.
 * `PLAN.md`: the plan, methods, ambiguities and assumptions.
 * `REPORT.md`: results, the comparison of the two grouping methods and the existing detector, and limitations.
 * `examples/`: saved outputs (synthetic scenes, selected product and Isaac Sim images, an aggregate over all images).
+* `cpp/`: C++ port of the processing core (branch `codex/intensity-lab-cpp`); build, run and parity results in `cpp/README.md`.
 
 ## Setup (once)
 
