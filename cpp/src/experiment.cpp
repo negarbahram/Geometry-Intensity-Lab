@@ -221,14 +221,19 @@ Json summary(const Result& r) {
     unc_c += r.components.lut[v] < 0;
   }
   Json sw = Json::array();
-  for (const auto& f : r.sweep)
+  for (const auto& f : r.sweep) {
+    auto groups = merge_groups(f, r.grouping.threshold, r.grouping.rule);
     sw.push(Json(Json::Object{{"k", f.k},
                               {"bic", f.bic()},
                               {"aic", f.aic()},
                               {"log_likelihood", f.log_likelihood},
-                              {"groups_at_threshold",
-                               static_cast<int>(merge_groups(f, r.grouping.threshold, r.grouping.rule).size())},
-                              {"converged", f.converged}}));
+                              {"groups_at_threshold", static_cast<int>(groups.size())},
+                              {"converged", f.converged},
+                              {"weights", Json::from(f.weights)},
+                              {"means", Json::from(f.means)},
+                              {"sigmas", Json::from(f.sigmas)},
+                              {"groups", groups_json(groups)}}));
+  }
   d.set("gmm", Json(Json::Object{{"fit", fit_json(r.fit)},
                                  {"separation_ashman_d", sep},
                                  {"threshold", r.grouping.threshold},
@@ -307,9 +312,18 @@ Json summary(const Result& r) {
 Json histogram_data(const Result& r) {
   auto arr = [](const Hist& h) { return Json::from(std::vector<double>(h.begin(), h.end())); };
   auto lut = [](const std::array<int, 256>& l) { return Json::from(std::vector<int>(l.begin(), l.end())); };
-  Json curves = Json::array(), post = Json::array();
+  Json curves = Json::array(), post = Json::array(), sweep_curves = Json::array(), palette = Json::array();
   for (const auto& c : r.fit.component_curves()) curves.push(arr(c));
   for (const auto& p : r.fit.posteriors()) post.push(arr(p));
+  for (const auto& f : r.sweep) {
+    Json cs = Json::array();
+    for (const auto& c : f.component_curves()) cs.push(arr(c));
+    sweep_curves.push(Json(Json::Object{{"k", f.k}, {"curves", cs}}));
+  }
+  for (int g = -1; g < 12; g++) {
+    cv::Vec3b c = group_color(g);
+    palette.push(Json(Json::Array{c[0], c[1], c[2]}));
+  }
   return Json(Json::Object{{"gray_values", "0..255 (index = gray value)"},
                            {"raw", arr(r.counts)},
                            {"smoothed", arr(r.smoothed)},
@@ -319,7 +333,10 @@ Json histogram_data(const Result& r) {
                            {"component_lut", lut(r.components.lut)},
                            {"group_lut", lut(r.grouping.lut)},
                            {"group_certainty", arr(r.grouping.certainty)},
-                           {"minima_lut", lut(r.minima.lut)}});
+                           {"minima_lut", lut(r.minima.lut)},
+                           {"sweep_curves", sweep_curves},
+                           {"palette_rgb", palette},
+                           {"palette_note", "entry 0 = uncertain (-1); entry g + 1 = group/component g, cycling every 12"}});
 }
 
 // ------------------------------------------------------------------------------------------------------------ save
@@ -365,7 +382,7 @@ void save(const Result& r, const std::string& out_dir) {
                              {"lab_commit", git_commit()},
                              {"opencv", CV_VERSION},
                              {"compiler", __VERSION__},
-                             {"random_starts", "std::mt19937_64 (start 1 identical to the Python reference)"}});
+                             {"random_starts", "start 1: quantile initialisation; starts 2..n: std::mt19937_64 seeded with gmm_seed"}});
   Json meta(Json::Object{{"settings", r.settings.to_json()},
                          {"software", software},
                          {"image_sha256", r.image.sha256},

@@ -1,5 +1,8 @@
 # C++ port of the Geometry Intensity Lab core — plan
 
+> Historical: the plan for the port. The port is complete, has replaced the Python processing, and the comparison
+> harness described below was removed with it (it is in Git history at commit `cfe9933`).
+
 Baseline: the reviewed Python implementation at commit `a79e332` (`intensity_lab/`), which stays in this repository
 unchanged as the reference. The port lives in `cpp/`, builds without Python, and is validated against the Python code by a
 comparison harness that runs both.

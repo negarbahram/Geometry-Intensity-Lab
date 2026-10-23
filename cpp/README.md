@@ -1,12 +1,14 @@
 # Geometry Intensity Lab — C++ core
 
-A C++17 / OpenCV port of the reviewed Python processing core (`intensity_lab/` at commit `a79e332`, kept unchanged in
-this repository as the reference). No Python at runtime. Plan and tolerances: `PORTING_PLAN.md`.
+The Lab's processing engine: a C++17 / OpenCV port of the reviewed Python processing core (commit `a79e332`), which it
+replaces. The Lab's interface and command line (`intensity_lab/engine.py`) run this CLI for every experiment; no Python
+is needed to run it on its own. Original porting plan and tolerances: `PORTING_PLAN.md`.
 
 Ported: histogram and explicit smoothing; histogram-weighted GMM fitting and the K = 1…8 comparison (BIC/AIC);
 Ashman's D separation and the `hierarchical` / `transitive` / `none` merge rules; unmerged component and merged group
 assignments (with the optional minimum posterior); histogram-minimum intervals; region masks and small-region cleanup;
-certain boundaries and uncertainty-band boundaries kept separate. Not ported: the detector comparison, plots, web UI.
+certain boundaries and uncertainty-band boundaries kept separate. The detector comparison, plots and web UI are in the
+Python layer, which draws them from this core's outputs.
 
 ## Build
 
@@ -29,12 +31,15 @@ build/intensity-lab-cli run --dataset product-images --image "top/Good Parts/Goo
 build/intensity-lab-cli run --dataset none --image /path/to/image.png --set gmm_k=5 --set merge_rule=transitive --out out/y
 build/intensity-lab-cli run --settings out/x/settings.json --out out/x2      # reproduce (also accepts Python settings.json)
 build/intensity-lab-cli summary --dataset isaacsim-images --image "front/isaacsim-samples/rgb_0046.png"   # summary.json to stdout
-build/intensity-lab-cli list --dataset isaacsim-images
+build/intensity-lab-cli list --dataset isaacsim-images                      # view, relative path, full path
+build/intensity-lab-cli defaults                                            # default settings (used by the interface)
 ```
 
-Settings have the same names, defaults and meaning as the Python `Settings` (`--set name=value`, JSON values).
-`run_detector`, `compare_tolerance_px` and `histogram_log_scale` are accepted and written back, but unused. Settings
-files are interchangeable: the C++ CLI reads Python's `settings.json`, and Python's `load_settings` reads the C++ one.
+The core defines the settings (`--set name=value`, JSON values; `defaults` prints them) with the same names, defaults
+and meaning as before. `run_detector`, `compare_tolerance_px` and `histogram_log_scale` are accepted and written back
+for the Python layer, but unused here. Settings files saved by the interface, by this CLI or by the earlier Python
+implementation are interchangeable. A failure exits with status 1 and an `error: ...` line on stderr, which the
+interface shows as it is.
 
 Outputs in `--out`:
 
@@ -42,7 +47,7 @@ Outputs in `--out`:
 | --- | --- |
 | `settings.json` | settings + software (C++, OpenCV version, lab commit) — re-runnable |
 | `summary.json` | same structure as the Python summary for the ported parts (image, histogram, gmm, minima, methods) plus `implementation: "c++"`; `gmm.fit.best_start` says which EM start won |
-| `histogram.json` | raw and smoothed histogram, component curves and posteriors, component / group / minima LUTs (the data behind the Python plots) |
+| `histogram.json` | raw and smoothed histogram, component curves and posteriors (selected K and every K of the sweep), component / group / minima LUTs, the colour palette — the data behind the interface's plots |
 | `original.png` | the gray image processed (after optional pre-smoothing) |
 | `mask_<m>.png`, `boundaries_<m>.png`, `labels_<m>.png` | as in Python, for `m` = `gmm_components`, `gmm`, `minima`; labels are stored as label + 1 (0 = uncertain) |
 | `boundary_mask_<m>.png`, `uncertain_boundary_mask_<m>.png` | the certain wireframe and the uncertainty-band edges as 0/255 masks |
@@ -51,10 +56,11 @@ Conventions are unchanged: gray values 0–255 (8-bit gray as stored; colour →
 half-to-even like `numpy.rint`); pixel (x, y) with the origin at the top-left; a label change between a pixel and its
 right or lower neighbour marks that pixel; label −1 = uncertain.
 
-## Parity with the Python reference
+## Parity with the earlier Python implementation (validation record)
 
-`.venv/bin/python cpp/parity/compare.py` runs both implementations on the same image and the same settings file and
-compares every stage. 62 cases: the six synthetic scenes and ten product / Isaac Sim images (every view group), with
+Before the Python processing was removed, a harness (`cpp/parity/compare.py` at commit `cfe9933`, removed afterwards
+with the Python processing it compared against) ran both implementations on the same image and the same settings file
+and compared every stage. 62 cases: the six synthetic scenes and ten product / Isaac Sim images (every view group), with
 the default settings and with one EM start; the synthetic scenes and four real images also with transitive merging,
 minimum posterior 0.8, and pre-smoothing σ 1 px plus cleanup of regions < 50 px. Full table: `parity/results.md`.
 
@@ -99,8 +105,9 @@ core in-process without plots or saving).
 3. **Last-bit floating-point differences** (summation order in smoothing, logsumexp and EM sums) are at the 1e-16–1e-11
    level. They could in principle flip a strict comparison between two nearly equal smoothed-histogram values or a
    posterior exactly at the minimum-posterior threshold; this did not occur in any case.
-4. **Not ported**: detector comparison, matplotlib figures (the CLI writes their data to `histogram.json` instead) and
-   the web UI. Python's `summary.json` additionally has `vs_detector`, `gmm_vs_minima_boundaries` and detector fields.
+4. **Outside the core**: detector comparison, matplotlib figures (drawn from `histogram.json` and `summary.json`) and
+   the web UI live in the Python layer, which adds `vs_detector`, `gmm_vs_minima_boundaries`, detector and engine fields
+   to the saved `summary.json`.
 5. **Other small differences**: PNG files are written by OpenCV rather than Pillow, so file bytes differ while pixels are
    identical. Palette images report mode `RGB` (OpenCV) where Pillow reports `P`. Separation values in `summary.json`
    are rounded to 3 decimals as `nearbyint(v·1000)/1000`, while Python's `round` rounds the exact decimal value, so the
@@ -112,7 +119,7 @@ core in-process without plots or saving).
 cpp/src/        json, sha256, histogram, imageio, gmm, minima, regions, boundaries, experiment (Settings -> Result -> save)
 cpp/cli/        intensity-lab-cli
 cpp/tests/      C++ unit tests (synthetic scenes read from examples/synthetic/*/input.png)
-cpp/parity/     compare.py (Python vs C++), results.{json,md}, more_starts.txt
+cpp/parity/     results.md, more_starts.txt: the parity record (the harness is in Git history, commit cfe9933)
 cpp/scripts/    build_opencv.sh
 cpp/third_party/, cpp/build/   (git-ignored) OpenCV build and the CMake build
 ```

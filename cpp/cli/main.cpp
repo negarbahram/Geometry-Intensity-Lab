@@ -3,8 +3,9 @@
 //   intensity-lab-cli run --settings outputs/<run>/settings.json --out DIR      re-run a saved experiment (Python or C++)
 //   intensity-lab-cli run --dataset product-images --image "top/.../Pic.bmp" --out DIR [--set name=value ...]
 //   intensity-lab-cli run --dataset none --image /path/to/file.png --out DIR
-//   intensity-lab-cli list --dataset product-images                            list the images of a dataset
+//   intensity-lab-cli list --dataset product-images                            images of a dataset: view, relpath, path
 //   intensity-lab-cli summary ...same as run, but print summary.json to stdout and write nothing
+//   intensity-lab-cli defaults                                                 default settings as JSON
 //
 // --set values are JSON (numbers, true/false, "strings"; a bare word is taken as a string).
 #include <cstdio>
@@ -22,7 +23,8 @@ int usage() {
   std::cerr << "usage:\n"
                "  intensity-lab-cli run|summary [--settings FILE] [--dataset NAME|none] [--image PATH] [--set k=v ...]"
                " [--out DIR]\n"
-               "  intensity-lab-cli list --dataset NAME\n";
+               "  intensity-lab-cli list --dataset NAME\n"
+               "  intensity-lab-cli defaults\n";
   return 2;
 }
 
@@ -60,9 +62,14 @@ int main(int argc, char** argv) {
     }
   }
   try {
+    if (cmd == "defaults") {
+      std::cout << ilab::Settings().to_json().dump(2) << "\n";
+      return 0;
+    }
     if (cmd == "list") {
       if (dataset.empty()) return usage();
-      for (const auto& e : ilab::list_images(dataset)) std::cout << e.view << "\t" << e.relpath << "\n";
+      for (const auto& e : ilab::list_images(dataset))
+        std::cout << e.view << "\t" << e.relpath << "\t" << ilab::resolve(dataset, e.relpath) << "\n";
       return 0;
     }
     if (cmd != "run" && cmd != "summary") return usage();

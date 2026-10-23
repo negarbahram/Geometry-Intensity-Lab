@@ -1,5 +1,10 @@
 # Results: histogram grouping, region masks and region boundaries vs the existing detector
 
+> These results were produced with the Lab's earlier Python processing implementation (commit `a79e332`). The Lab now
+> runs the C++ core (`cpp/`), which reproduces those computations to numerical precision from the same EM start; with
+> the default 5 random EM starts it can settle on a different local optimum on some images (see `cpp/README.md`).
+> Scripts named below that no longer exist (`evaluate_synthetic.py`, `check_initialisation.py`) are in Git history.
+
 Everything below comes from `examples/` and can be regenerated with the scripts in the README.
 
 How to read the numbers:
