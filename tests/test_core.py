@@ -243,3 +243,73 @@ def test_end_to_end_with_detector_on_synthetic(tmp_path):
     assert r.detector_error is None
     assert len(r.methods["gmm"].stats) == 3 and len(r.methods["minima"].stats) == 3
     assert r.methods["gmm"].vs_detector["reference_matched"] > 0.8
+
+
+# --- uncertain labels (min_posterior > 0) ----------------------------------------------------------------------------
+
+def test_uncertain_band_is_not_a_wireframe_edge():
+    """group 0 | uncertain band | group 1: no certain boundary exists; the band edges are reported as uncertain."""
+    lab = np.zeros((4, 9), dtype=np.int16)
+    lab[:, 3:6] = -1
+    lab[:, 6:] = 1
+    certain, uncertain = boundaries.boundary_masks(lab)
+    assert not certain.any()
+    assert uncertain[:, 2].all() and uncertain[:, 5].all() and uncertain.sum() == 8
+    assert not boundaries.boundary_mask(lab).any()
+    assert not boundaries.boundary_steps(np.zeros(lab.shape, np.uint8) + 9, lab).any()
+
+
+def test_direct_group_change_next_to_uncertainty_stays_certain():
+    lab = np.array([[0, 0, 1, 1],
+                    [0, 0, 1, 1],
+                    [-1, -1, -1, -1]], dtype=np.int16)
+    certain, uncertain = boundaries.boundary_masks(lab)
+    assert certain[0, 1] and certain[1, 1]               # 0|1 change in the certain rows
+    assert not uncertain[1, 1]                           # also borders the band below, but counts as certain only
+    assert uncertain[1, 0] and uncertain[1, 2] and uncertain[1, 3]
+    assert not certain[2].any() and not uncertain[2].any()
+
+
+def test_cleanup_leaves_uncertain_pixels_alone():
+    lab = np.zeros((20, 20), dtype=np.int16)
+    lab[:, 10:] = 1
+    lab[5, 5] = -1                                       # small uncertain speck: must stay uncertain
+    lab[12, 11] = 0                                      # small certain speck next to group 1: refilled
+    lab[0:3, 9:12] = -1                                  # band touching both groups
+    lab[1, 12] = 0                                       # small speck whose nearest pixels are uncertain
+    out, removed = regions.remove_small_regions(lab, 4)
+    assert (out == -1).sum() == (lab == -1).sum() and (out[lab == -1] == -1).all()
+    assert out[12, 11] == 1 and out[1, 12] == 1          # filled from the nearest *certain* pixel, never from -1
+    assert removed == 2
+
+
+def test_experiment_separates_uncertain_boundaries(tmp_path):
+    from PIL import Image
+    s = scene("close_levels")
+    p = tmp_path / "close.png"
+    Image.fromarray(s.gray).save(p)
+    r = run(Settings(dataset=None, image=str(p), gmm_k=4, gmm_sweep_max_k=4, min_posterior=0.95,
+                     merge_rule="none", run_detector=False))
+    m = r.methods["gmm"]
+    assert (m.labels == -1).any() and m.uncertain_boundary.any()
+    # every certain boundary pixel has a direct change between two groups, never only a change to -1
+    lab = m.labels
+    ys, xs = np.nonzero(m.boundary)
+    for y, x in zip(ys, xs):
+        nb = [lab[y, x + 1]] if x + 1 < lab.shape[1] else []
+        nb += [lab[y + 1, x]] if y + 1 < lab.shape[0] else []
+        assert lab[y, x] >= 0 and any(n >= 0 and n != lab[y, x] for n in nb)
+
+
+# --- fitting vs merging ----------------------------------------------------------------------------------------------
+
+def test_unmerged_components_are_kept_when_merging_collapses():
+    """Parameters EM found on product image top/RHS_NG/125226_3 (K=4): hierarchical merging at D >= 2 leaves a single
+    group (no boundaries), while the unmerged components still separate the image."""
+    fit = _fit([22, 22, 51, 108], [4, 2, 8, 50], [0.061, 0.071, 0.725, 0.144])
+    assert len(gmm.merge_groups(fit, 2.0, "hierarchical")) == 1
+    comp = gmm.component_lut(fit)
+    assert comp.groups == [[0], [1], [2], [3]] and len(set(comp.lut.tolist())) >= 3
+    g = np.tile(np.arange(256, dtype=np.uint8), (4, 1))
+    assert boundaries.boundary_mask(regions.apply_lut(g, comp.lut)).any()
+    assert not boundaries.boundary_mask(regions.apply_lut(g, gmm.group_lut(fit, 2.0).lut)).any()

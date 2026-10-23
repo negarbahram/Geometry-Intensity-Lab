@@ -1,47 +1,72 @@
 # Results: histogram grouping, region masks and region boundaries vs the existing detector
 
-Everything below comes from `examples/` and can be regenerated with the scripts in the README. There is no ground truth
-for the real images, so numbers on them describe *agreement with the detector* and *how much boundary is produced*,
-not accuracy. Accuracy is measured only on synthetic scenes.
+Everything below comes from `examples/` and can be regenerated with the scripts in the README.
+
+How to read the numbers:
+* **Accuracy** (recall/precision against known regions) exists only for the synthetic scenes.
+* On real images there is no ground truth. "Detector edge matched" and "near detector" measure **agreement with the
+  existing detector**, which is itself a heuristic, not a reference. "Missing" and "unwanted" are visual judgements and
+  are labelled as such.
+* Every conclusion holds for the tested settings only: one noise seed per synthetic scene, the stated K, merge rule and
+  number of EM starts (default 5), and default minima parameters. None of them is a general limit of the method.
 
 ## 1. Synthetic scenes (known regions)
 
-`examples/synthetic/results.md`; tolerance 2 px. Recall = share of true boundary pixels found, precision = share of
-predicted boundary pixels on a true boundary. "K=4" uses the default settings.
+`examples/synthetic/results.md`; tolerance 2 px, one noise seed per scene. Recall = share of true boundary pixels found,
+precision = share of predicted boundary pixels on a true boundary. "Components" = the GMM fit without merging;
+"groups" = after merging (default: hierarchical, D ≥ 2). Default EM starts: 5.
 
-| scene | GMM K=4 (default) | GMM K=4, transitive merge | histogram minima | existing detector |
-| --- | --- | --- | --- | --- |
-| three_levels (50/130/210, noise 6) | 3 groups · R 1.00 · P 0.96 | same | 3 · R 1.00 · P 1.00 | R 0.67 · P 1.00 (disc missed) |
-| close_levels (120 vs 128 touching) | 3 of 4 · R 0.87 · P 1.00 | same | 3 of 4 · R 0.87 · P 1.00 | R 0.76 · P 1.00 |
-| small_bright_spot (0.4 % of pixels) | 2 of 3 (spot not a group) · R 1.00 · P 0.99 | same | 4 of 3 · R 1.00 · P 1.00 | R 0.90 · P 1.00 |
-| blurred_edges (σ 2 px) | 3 · R 0.95 · **P 0.64** | same | 3 · R 1.00 · P 1.00 | R 0.67 · P 1.00 |
-| illumination_ramp (one region, ramp 40→130) | 4 of 2 · R 1.00 · **P 0.07** | same | 3 of 2 · R 1.00 · **P 0.15** | R 1.00 · P 1.00 |
-| noise_free (anti-aliased only) | 3 · R 1.00 · P 1.00 | **2 of 3 · R 0.34** | 6 of 3 · R 1.00 · P 1.00 | R 0.67 · P 1.00 |
+| scene | GMM K=4 components | GMM K=4 groups | GMM K=4 groups, transitive | GMM K=4 groups, 20 starts | histogram minima | existing detector |
+| --- | --- | --- | --- | --- | --- | --- |
+| three_levels (50/130/210, noise σ 6) | 4 · R 1.00 · P 0.91 | 3 · R 1.00 · P 0.96 | same | same | 3 · R 1.00 · P 1.00 | R 0.67 · P 1.00 |
+| close_levels (120 vs 128 touching, σ 6) | 4 (not the pair) · R 0.87 · P 0.99 | 3 of 4 · R 0.87 · P 1.00 | same | same | 3 of 4 · R 0.87 · P 1.00 | R 0.76 · P 1.00 |
+| small_bright_spot (0.4 % of pixels) | 4 · R 1.00 · **P 0.05** | 2 of 3 · R 1.00 · P 0.99 | same | **4 · R 1.00 · P 0.97** | 4 of 3 · R 1.00 · P 1.00 | R 0.90 · P 1.00 |
+| blurred_edges (σ 2 px) | 4 · R 1.00 · P 0.61 | 3 · R 0.95 · **P 0.64** | same | same | 3 · R 1.00 · P 1.00 | R 0.67 · P 1.00 |
+| illumination_ramp (one region, ramp 40→130) | 4 of 2 · R 1.00 · **P 0.07** | same | same | same | 3 of 2 · R 1.00 · **P 0.15** | R 1.00 · P 1.00 |
+| noise_free (anti-aliased only) | 4 · R 1.00 · P 1.00 | 3 · R 1.00 · P 1.00 | **2 of 3 · R 0.34** | same as 5 starts | 6 of 3 · R 1.00 · P 1.00 | R 0.67 · P 1.00 |
 
-What this shows:
+To check whether the GMM outcomes are optimisation artefacts, EM was also started at the true parameters
+(`scripts/check_initialisation.py` → `examples/synthetic/initialisation_check.txt`):
 
-* Both methods recover well-separated levels exactly, and region boundaries then land on the true edges (≤ 2 px).
-* **Neither method can separate levels closer than about 2σ of the noise** (120 vs 128 at σ 6). With K = 4 the GMM did
-  not even place two components there; it put one between them and spent the fourth on edge pixels. That is the
-  maximum-likelihood answer, not a bug.
-* **Small modes**: the GMM missed a bright spot holding 0.4 % of the pixels (EM preferred a broad component); the minima
-  method found it, plus one extra interval from the anti-aliased rim.
-* **Blurred edges**: intermediate gray values along an edge form their own GMM component; it becomes a thin extra band
-  with a second boundary next to the real one (precision 0.64). The minima method was not affected here because the
-  valley stayed deep.
-* **Illumination gradients** are the main failure of both: a single surface with a ramp is cut into iso-intensity bands
-  (precision 0.07 / 0.15). Intensity grouping has no notion of spatial continuity.
-* **Overlap handling matters**: with transitive merging, one broad low-weight "edge pixel" component that overlaps two
-  separated levels chains them into one group (noise_free, recall 0.34). The default hierarchical rule avoids that case
-  — but see the real-image failure in §3, where it does worse.
-* **The detector** is precise (every reported line is on a true edge) but reports **no circles for bright discs** in any
-  scene; its circle verification expects a dark interior (`max_inner_mean = 80` in its parameters). Its recall is lower
-  for that reason, not because lines are missed.
+| scene, K | default fit (5 starts) | started at true parameters | 20 / 100 random starts |
+| --- | --- | --- | --- |
+| close_levels, K=4 | LL −483 437.9, means 60 / 123.6 / 139.4 (σ 32) / 199.9 | converges to the same solution (ΔLL 0.0) | same solution |
+| small_bright_spot, K=3 | LL −433 969.8, broad component instead of the spot | LL −439 429.0 (spot kept) — **lower** than the default fit | same as default |
+| small_bright_spot, K=4 | LL −433 966.5, no spot component | — | **LL −433 150.8, spot at 225 kept** |
+| blurred_edges, K=3 | LL −481 815.2, 50 / 129.5 / 163 (σ 53) | **LL −480 982.8, 50 / 127 / 208.5** | same as true start |
 
-The 22 unit tests (`tests/test_core.py`) cover the same mechanisms at a smaller scale: histogram on 0–255, smoothing kept
-separate, EM equal to scikit-learn's on all pixels (±0.05 gray levels), Ashman's D, both merge rules, non-contiguous gray
-ranges, the σ floor on a 255 spike, minima with plateaus, exact boundaries on a label map, small-region cleanup,
-comparison tolerance, and an end-to-end run with the real detector.
+What these tests establish, and what they do not:
+
+* **Well-separated levels** (three_levels, noise_free): both methods recovered them and the region boundaries lay on the
+  true edges within 2 px. Tested at noise σ 6 and 0 only.
+* **The 120 vs 128 pair (Δ = 8 at noise σ 6, Ashman's D ≈ 1.3)** was not separated by either method in this one scene.
+  For the GMM with K = 4 the evidence is that EM started at the true parameters converges to the same solution and 100
+  random starts find nothing better: within these tests it is the best K = 4 fit found, with one component between the
+  two levels and one broad component for edge pixels. That is not a proof of a global maximum, and no other separations,
+  noise levels or region sizes were tested, so no general "≈ 2σ" limit is claimed. For the minima method it only shows that
+  the smoothed histogram (σ 2) had no valley there.
+* **The small bright spot** is lost by the default GMM partly through **initialisation**: at K = 4, 20 starts find a fit
+  with higher likelihood that keeps the spot, and it survives merging (4 groups, precision 0.97). At K = 3 the broad
+  solution genuinely has the higher likelihood. The minima method found the spot with default settings (plus one extra
+  interval from the anti-aliased rim).
+* **Blurred edges**: with K = 3 the default fit is a local optimum (the true-parameter start reaches a higher likelihood
+  with all three levels). With K = 4 the extra component models intermediate edge values and produces a second boundary
+  beside the real one (precision 0.61–0.64). The minima valley stayed deep enough in this scene.
+* **Illumination ramp**: in the one ramp scene, both methods cut the single surface into iso-intensity bands (precision
+  0.07 / 0.15). Intensity grouping uses no spatial information, so this is expected wherever a ramp spans a threshold.
+* **Merge rule**: in noise_free the unmerged components are correct (recall 1.00); transitive merging chains two levels
+  through a broad edge-pixel component (recall 0.34); hierarchical merging does not. On real images hierarchical merging
+  fails differently (§3).
+* **The detector** placed every reported line on a true edge (precision 1.00 in every scene) and reported **no circle**
+  in any scene. Its circle check requires the inside to be at least 35 gray levels darker than the ring and at most 80
+  (`pipeline.cpp:538`, `min_inside_contrast`, `max_inner_mean`), so bright discs cannot pass. Its lower recall is
+  consistent with that: e.g. in three_levels the rectangle is 66 % of the true boundary length and recall is 0.665.
+
+The 27 unit tests (`tests/test_core.py`) cover: histogram on 0–255, smoothing kept separate, EM equal to scikit-learn's
+on all pixels (±0.05 gray levels), Ashman's D, all merge rules, non-contiguous gray ranges, the σ floor on a 255 spike,
+minima with plateaus, exact boundaries on a label map, uncertain-band boundaries kept out of the wireframe, small-region
+cleanup that never touches uncertain pixels, unmerged components surviving a merge collapse, comparison tolerance, and an
+end-to-end run with the real detector.
 
 ## 2. How the separation criterion and overlaps are handled
 
@@ -50,8 +75,16 @@ comparison tolerance, and an end-to-end run with the real detector.
   them by their moment-matched Gaussian (same weight, mean and variance), until every pair has D ≥ threshold.
   *Transitive* (option): any linked pair joins one group.
 * **Assignment**: each gray value goes to the group with the highest summed posterior, so a group can own several
-  non-contiguous gray ranges (seen on real images: a broad component owning both tails of a narrow one). Optional
-  "minimum posterior" marks low-certainty gray values as *uncertain* instead.
+  non-contiguous gray ranges (seen on real images: a broad component owning both tails of a narrow one).
+* **Fit vs merge are shown separately**: every run also labels pixels by their most probable component without merging
+  ("GMM components"), with its own mask, boundaries and detector comparison, so a missing boundary can be traced to the
+  fit or to the merge. The merge rule and threshold are experimental choices of this prototype, not requirements.
+* **Uncertain values**: an optional minimum posterior labels gray values whose best posterior is lower as *uncertain*
+  (−1). A label change with −1 on one side is the edge of an uncertainty band, not a boundary between two groups: it is
+  drawn in yellow, counted separately and excluded from the wireframe, the gray-step statistics and every comparison.
+  Small-region cleanup never relabels uncertain pixels and never fills from them. (Before this was fixed, such edges were
+  drawn as ordinary wireframe edges: on product top/RHS_NG/125226_3 with default settings and minimum posterior 0.8,
+  24 324 of the 25 360 unmerged-component boundary pixels are uncertainty-band edges.) The default is off (0), so the default results are unaffected.
 * A component is a shape in the gray-value distribution. Per-group statistics in every output count the **connected
   regions** of each group: on real images a group is typically tens to hundreds of separate regions, never "one object".
 
@@ -84,12 +117,17 @@ Failures across all 75 distinct images (default settings), not visible in the ha
 * **Minima method gives a single interval — no boundaries at all — on 11 of the 15 Isaac overhead images.** The dial
   and floor produce one dominant peak with a long tail, and the only valley is shallower than the 0.2 depth threshold.
   (The two overhead examples in the table below happen to be among the 4 that kept one threshold.)
-* **GMM collapses to one group on 5 of the 16 product top-view (990x550) images** (four RHS_NG and one "Nick on the
-  Flange"): a broad component (σ ≈ 50) overlaps everything at D < 2.
-* Across all images the minima method matched more of the detector's edge length on 48, the GMM on 15 (the rest tie).
+* **GMM groups collapse to one group on 5 of the 16 product top-view (990x550) images** (four RHS_NG and one "Nick on
+  the Flange"). `examples/gmm_collapse_check.txt` traces the cause: in all 5 the unmerged fit has 4 components and
+  12 000–89 000 boundary pixels, so **the collapse happens in the merge**: a broad component (σ ≈ 43–56) is within D < 2
+  of its neighbours and hierarchical merging absorbs everything (transitive merging leaves 2–3 groups). In 3 of the 5,
+  20 EM starts also find a higher-likelihood fit (with a component at the clipped value 255) that merges to 3–4 groups,
+  so the 5-start fit is a local optimum as well. Both factors contribute.
+* Across all images the minima boundaries agreed with more of the detector's edge length on 48, the GMM groups on 15
+  (the rest tie). This is agreement with the detector, not accuracy.
 * The cleanup variant (pre-smoothing σ 1 px, regions < 50 px removed) reduced the boundary length by a median of 39 %
   (GMM) / 33 % (minima), and lowered agreement with the detector on most groups — it removes short true edges along with
-  speckle. On some images it changed the grouping itself (one minima case gained boundary).
+  speckle (visual check). On some images it changed the grouping itself (one minima case gained boundary).
 * The detector reported 0 circles on all 75 images.
 
 ### Selected examples (`examples/<dataset>/<image>/default/`)
@@ -114,21 +152,22 @@ Failures across all 75 distinct images (default settings), not visible in the ha
 * *Found by regions, not reported by the detector* (magenta, but real boundaries by visual inspection): the outlines of
   the two through-holes on every top/bottom/front image (clipped at 255; the detector reports no circles there), the
   silhouette of the bright housing on the left, and the slot outlines.
-* *Unwanted region boundaries*: speckle and short closed contours in the dark textured areas (right-hand side of top/
-  front, rear background), where the gray values straddle an interval threshold; ragged contours along machining marks
-  and the striped band on the front image; contours of shading bands inside the slots. This is most of the "regions
-  only" length: only 3–21 % of region boundary pixels lie near a detector edge.
-* *Missing from region boundaries* (cyan): edges between surfaces that fall into the same intensity group, e.g. the
-  vertical step at x≈155 and the inner slot shoulders on bottom/115202_10 (only 41–45 % of detector edge length matched).
-  An edge with a real but small gray step inside one group cannot appear by construction.
+* *Probably unwanted region boundaries* (visual judgement): speckle and short closed contours in the dark textured areas
+  (right-hand side of top/front, rear background), where the gray values straddle an interval threshold; ragged contours
+  along machining marks and the striped band on the front image; contours of shading bands inside the slots. Only 3–21 %
+  of region boundary pixels lie near a detector edge; how much of the rest is clutter versus real edges the detector
+  omits was not measured.
+* *Detector-only edges* (cyan) that look real: edges between surfaces that fall into the same intensity group, e.g. the
+  vertical step at x≈155 and the inner slot shoulders on bottom/115202_10 (41–45 % of detector edge length matched).
+  An edge whose gray step lies inside one group cannot appear by construction.
 * Pre-smoothing (σ 1 px) plus removal of regions < 50 px cuts boundary pixels (median 33–39 % over all images) and removes most specks
   (compare `default/` and `cleanup/`), at the cost of a few short true edges.
 
 **Isaac Sim**
 
-* *Side views*: shading is flat, so the minima intervals reproduce 99 % of the detector's lines; they also add
-  iso-intensity bands across the shaded floor and the cylinder (the ramp failure from §1). The GMM (K = 4) groups the
-  many narrow peaks too coarsely and misses about half of the detector's edges.
+* *Side views*: the minima boundaries lie within 3 px of 99 % of the detector's line length; they also add iso-intensity
+  bands across the shaded floor and the cylinder (like the ramp scene in §1). The GMM groups (K = 4) cover about half of
+  the detector's line length; the histogram has many narrow peaks and four components group them coarsely.
 * *Overhead dial*: both methods outline the ~100 tick marks and the hub (the detector reports neither; presumably its
   cluster rule for parallel short strokes suppresses the ticks — not verified) but **both miss the dial rim**, which the detector partly finds: plate and floor
   have nearly the same gray value. The detector's 5 lines and the region boundaries do not overlap at all.
@@ -137,34 +176,43 @@ Failures across all 75 distinct images (default settings), not visible in the ha
 
 | | GMM (+ Ashman's D merging) | Local histogram minima |
 | --- | --- | --- |
-| Separated levels | exact | exact |
-| Levels closer than ~2σ | not separated | not separated |
-| Small modes (< 1 % of pixels) | often absorbed by a broad component | found if a valley exists |
+| Well-separated levels (tested σ 0 and 6) | recovered | recovered |
+| One close pair (Δ 8, σ 6) | not separated (best fit found at K = 4) | not separated (no valley at σ 2) |
+| Small mode (0.4 % of pixels, one scene) | lost with 5 starts, kept with 20 starts at K = 4 | found |
 | Edge (mixed) pixels | can form their own component → double boundaries | only if they produce a valley |
-| Stability | **sensitive to K and merge rule**: 125226_3 gives 1 group at K = 4 (hierarchical), 2 (transitive), 4 at K = 5 | sensitive to smoothing σ and depth threshold; minima positions are stable |
+| Stability | **sensitive to K, EM starts and merge rule**: 125226_3 gives 1 group at K = 4 (hierarchical), 2 (transitive), 4 with K = 5 or with 20 starts | depends on smoothing σ and depth threshold (sensitivity not swept) |
 | Choosing the count | BIC was lowest at the largest K tried (8) on 9 of 10 examples (hundreds of thousands of pixels): no usable optimum | follows the histogram's own valleys; on flat-shaded Isaac side views this means 9 intervals |
 | Interpretability | components, σ and D per pair; non-contiguous gray ranges possible | contiguous thresholds, easy to read |
 | Cost | ~0.3–1 s (sweep of 8 K × 5 starts) | < 1 ms |
 
-Neither is better overall. Each has a whole-image failure mode at default settings: the GMM merges everything into one
-group on 5/16 product top views, the minima method finds no valley on 11/15 Isaac overhead images. On the examples the minima method agreed with the detector more often (higher "detector
-edge matched" on 7 of 10 examples, GMM on 2, one tie) mainly because it produces more groups and therefore more boundary; the share of its
-boundary that is near a detector edge is no higher. The GMM had the single worst failure (a whole image as one group).
+Neither is better overall in these tests. Each has a whole-image failure at default settings: GMM merging collapses
+5/16 product top views to one group, and the minima method finds no valley on 11/15 Isaac overhead images. The minima
+boundaries agreed with the detector more often (7 of 10 examples, 48 of 75 images). That is agreement, not accuracy,
+and it is consistent with the minima method producing more groups and more boundary: the share of its boundary near a
+detector edge is no higher than the GMM's.
 
 ## 5. Region boundaries vs the existing detector
 
 * They are different kinds of output: the detector reports ≤ 40 filtered straight lines and dark verified circles;
   region boundaries are every label change, closed contours, at full resolution.
-* Region boundaries add real closed outlines the detector omits (bright holes, curved silhouettes, tick marks) but
-  also much more clutter (texture, noise, shading bands). Without a filter on contrast, length or shape they are not
+* By visual inspection, region boundaries add closed outlines the detector omits (bright holes, curved silhouettes,
+  tick marks) but also much more clutter (texture, noise, shading bands). Without a filter on contrast, length or shape they are not
   usable as measurement landmarks directly.
-* The detector finds low-contrast straight edges inside one intensity group that grouping cannot see.
+* The detector reports low-contrast straight edges that fall inside one intensity group, which grouping cannot
+  produce by construction.
 * On the 6144x550 rear line-scan images the detector runs on a 1280x115 downscaled copy (its `processing_max_side`),
   then refines on the full image; region boundaries work at full resolution.
 
 ## 6. Limitations
 
-* No ground truth for real images; "missing"/"unwanted" are judgements against the detector and by eye.
+* No ground truth for real images; "missing"/"unwanted" are judgements against the detector and by eye, and detector
+  agreement is not accuracy.
+* Synthetic conclusions rest on one noise seed per scene and a handful of level spacings; no parameter sweeps.
+* The default of 5 EM starts is too few for some images (§1, §3); 20 starts changed the result on 3 of 5 collapsed images.
+  The default was not changed, so the aggregate stays comparable; raise "EM starts" in the interface when checking a
+  GMM failure.
+* The aggregate table was not re-run after adding the unmerged-component view; the GMM and minima outputs it reports are
+  unchanged (verified on a regenerated example), and the component view was checked only on the 5 collapsed images.
 * Whole-image histograms: large uniform areas (rear background, Isaac floor) dominate both fits; no ROI support.
 * Isaac colour is reduced to BT.601 gray; surfaces differing only in hue can merge.
 * Clipped pixels (0 and 255) are fitted like any other value (a narrow component at 255 with the σ floor of 1).

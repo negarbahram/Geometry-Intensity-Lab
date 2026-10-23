@@ -1,0 +1,19 @@
+LL = log-likelihood (higher is better). True-parameter start: true levels, the scene's noise sigma, true weights.
+
+close_levels K=4, 5 starts (default): LL -483437.9  means [60.0, 123.6, 139.4, 199.9]  sd [6.0, 7.2, 32.1, 6.1]
+    started at true parameters: LL -483437.9  means [60.0, 123.6, 139.8, 199.9]  sd [6.0, 7.2, 32.1, 6.1]  (difference +0.0)
+    20 starts: LL -483437.9  means [60.0, 123.6, 139.4, 199.9]
+    100 starts: LL -483437.9  means [60.0, 123.6, 139.4, 199.9]
+
+small_bright_spot K=3, 5 starts (default): LL -433969.8  means [40.0, 140.0, 144.4]  sd [5.0, 5.0, 64.8]
+    started at true parameters: LL -439429.0  means [40.1, 139.6, 225.3]  sd [5.2, 6.4, 5.4]  (difference -5459.3)
+    20 starts: LL -433969.8  means [40.0, 140.0, 144.4]
+    100 starts: LL -433969.8  means [40.0, 140.0, 144.4]
+small_bright_spot K=4, 5 starts (default): LL -433966.5  means [39.6, 40.5, 140.0, 145.0]  sd [4.8, 5.2, 5.0, 64.7]
+    20 starts: LL -433150.8  means [40.0, 93.5, 140.0, 225.4]
+    100 starts: LL -433150.8  means [40.0, 93.5, 140.0, 225.4]
+
+blurred_edges K=3, 5 starts (default): LL -481815.2  means [50.2, 129.5, 163.2]  sd [6.1, 5.7, 53.0]
+    started at true parameters: LL -480982.8  means [50.3, 127.2, 208.5]  sd [6.3, 12.8, 7.6]  (difference +832.4)
+    20 starts: LL -480982.8  means [50.3, 127.2, 208.5]
+    100 starts: LL -480982.8  means [50.3, 127.2, 208.5]

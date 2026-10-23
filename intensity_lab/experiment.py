@@ -65,7 +65,8 @@ class MethodResult:
     labels: np.ndarray
     regions_removed: int
     stats: list
-    boundary: np.ndarray
+    boundary: np.ndarray                      # certain: between two intensity groups (the wireframe)
+    uncertain_boundary: np.ndarray            # edges of "uncertain" (-1) bands; never part of the wireframe
     steps: np.ndarray
     vs_detector: dict | None = None
 
@@ -80,6 +81,7 @@ class Result:
     fit: gmm.GMMFit
     sweep: list
     grouping: gmm.GMMGrouping
+    components: gmm.GMMGrouping               # the same fit without merging: one label per component
     minima: minima.MinimaResult
     methods: dict = field(default_factory=dict)
     detector_doc: dict | None = None
@@ -92,8 +94,9 @@ class Result:
 def _method(name, gray, lut, s: Settings) -> MethodResult:
     labels = regions.apply_lut(gray, lut)
     labels, removed = regions.remove_small_regions(labels, s.min_region_area_px)
+    certain, uncertain = boundaries.boundary_masks(labels)
     return MethodResult(name=name, lut=lut, labels=labels, regions_removed=removed,
-                        stats=regions.group_stats(gray, labels), boundary=boundaries.boundary_mask(labels),
+                        stats=regions.group_stats(gray, labels), boundary=certain, uncertain_boundary=uncertain,
                         steps=boundaries.boundary_steps(gray, labels))
 
 
@@ -111,6 +114,7 @@ def run(s: Settings, loaded: imageio.LoadedImage | None = None) -> Result:
     sweep = gmm.sweep(counts, range(1, max(s.gmm_sweep_max_k, s.gmm_k) + 1), **kw)
     fit = next(f for f in sweep if f.k == s.gmm_k)
     grouping = gmm.group_lut(fit, s.separation_threshold, s.min_posterior, s.merge_rule)
+    components = gmm.component_lut(fit, s.min_posterior)
     t["gmm"] = (time.perf_counter() - t0) * 1e3
 
     t0 = time.perf_counter()
@@ -119,7 +123,10 @@ def run(s: Settings, loaded: imageio.LoadedImage | None = None) -> Result:
 
     t0 = time.perf_counter()
     r = Result(settings=s, image=img, gray=gray, counts=counts, smoothed=smoothed, fit=fit, sweep=sweep,
-               grouping=grouping, minima=mres)
+               grouping=grouping, components=components, minima=mres)
+    # "gmm_components" is the fitted mixture as is; "gmm" is after merging. Comparing the two tells whether a missing
+    # boundary was lost in the fit or in the merge.
+    r.methods["gmm_components"] = _method("gmm_components", gray, components.lut, s)
     r.methods["gmm"] = _method("gmm", gray, grouping.lut, s)
     r.methods["minima"] = _method("minima", gray, mres.lut, s)
     r.gmm_vs_minima = compare.compare(r.methods["gmm"].boundary, r.methods["minima"].boundary, s.compare_tolerance_px)
@@ -171,6 +178,8 @@ def summary(r: Result) -> dict:
                                 for g in r.grouping.groups],
             "gray_ranges": regions.lut_ranges(r.grouping.lut), "min_posterior": r.grouping.min_posterior,
             "uncertain_gray_values": int((r.grouping.lut < 0).sum()),
+            "component_gray_ranges": regions.lut_ranges(r.components.lut),
+            "uncertain_gray_values_components": int((r.components.lut < 0).sum()),
             "sweep": [{"k": f.k, "bic": f.bic, "aic": f.aic, "log_likelihood": f.log_likelihood,
                        "groups_at_threshold": len(gmm.merge_groups(f, r.grouping.threshold, r.grouping.rule)),
                        "converged": f.converged} for f in r.sweep],
@@ -186,8 +195,9 @@ def summary(r: Result) -> dict:
     for name, m in r.methods.items():
         b = m.boundary
         d["methods"][name] = {
-            "groups": len(m.stats), "regions_removed_by_cleanup": m.regions_removed, "group_stats": m.stats,
+            "groups": sum(st["group"] >= 0 for st in m.stats), "regions_removed_by_cleanup": m.regions_removed, "group_stats": m.stats,
             "boundary_px": int(b.sum()), "boundary_share_of_image": float(b.mean()),
+            "uncertain_pixels": int((m.labels < 0).sum()), "uncertain_boundary_px": int(m.uncertain_boundary.sum()),
             "boundary_step_median": float(np.median(m.steps[b])) if b.any() else None,
             "boundary_step_p90": float(np.percentile(m.steps[b], 90)) if b.any() else None,
             "vs_detector": compare.public(m.vs_detector) if m.vs_detector else None,
@@ -206,7 +216,8 @@ def images(r: Result, display: bool = False) -> dict[str, np.ndarray]:
     out = {"original": r.gray}
     for name, m in r.methods.items():
         out[f"mask_{name}"] = regions.overlay(r.gray, m.labels)
-        out[f"boundaries_{name}"] = boundaries.wireframe_image(r.gray, m.boundary, thicken=th)
+        out[f"boundaries_{name}"] = boundaries.wireframe_image(r.gray, m.boundary, thicken=th,
+                                                               uncertain=m.uncertain_boundary)
         if m.vs_detector:
             out[f"compare_{name}"] = compare.overlay(r.gray, m.vs_detector, thicken=1 + th)
     if r.detector_mask is not None:
@@ -217,7 +228,8 @@ def images(r: Result, display: bool = False) -> dict[str, np.ndarray]:
 def figures(r: Result) -> dict[str, bytes]:
     log = r.settings.histogram_log_scale
     return {
-        "histogram_gmm": plots.histogram_gmm(r.counts, r.fit, r.grouping, log, r.smoothed, r.settings.hist_smooth_sigma),
+        "histogram_gmm": plots.histogram_gmm(r.counts, r.fit, r.grouping, log, r.smoothed, r.settings.hist_smooth_sigma,
+                                             components=r.components),
         "histogram_minima": plots.histogram_minima(r.counts, r.smoothed, r.settings.hist_smooth_sigma, r.minima, log),
         "gmm_k_sweep": plots.k_sweep(r.sweep, r.fit.k),
         "gmm_k_grid": plots.k_grid(r.counts, [f for f in r.sweep if f.k >= 2], r.grouping.threshold, log,

@@ -136,7 +136,7 @@ function getSettings() {
   const s = {...CFG.defaults, dataset: $("dataset").value, image: $("image").value};
   for (const [, items] of FIELDS) for (const [k,, , step] of items) {
     const el = $("s_" + k);
-    s[k] = step === "bool" ? el.checked : Array.isArray(step) ? el.value : (Number.isInteger(CFG.defaults[k]) ? parseInt(el.value) : parseFloat(el.value));
+    s[k] = step === "bool" ? el.checked : Array.isArray(step) ? el.value : (step === 1 ? parseInt(el.value) : parseFloat(el.value));   // integer fields have step 1; a 0.0 default is still a float
   }
   return s;
 }
@@ -180,7 +180,8 @@ function render(r) {
   $("t-gmm").innerHTML = `<p class="note">Gaussian mixture fitted by EM to the raw histogram (all pixels), K = ${fit.k}, log-likelihood ${f(fit.log_likelihood,0)}, ${fit.converged ? "converged" : "<b>not converged</b>"} after ${fit.n_iter} iterations.
     Separation: Ashman's D = |μ₁−μ₂| / √((σ₁²+σ₂²)/2). Pairs with D &lt; ${th} are shown in red. Overlap handling: <b>${G.merge_rule}</b> — ${G.merge_rule === "hierarchical" ? "the least-separated pair of groups is merged and replaced by its moment-matched Gaussian, repeated until every pair has D ≥ " + th : "every linked pair joins one group (a broad component can chain separated levels)"}.
     Each gray value goes to the group with the highest summed posterior, so a group can own non-contiguous gray ranges. A component is a shape in the gray-value distribution, not an object.</p>
-    ${img("histogram_gmm", "<b>Fitted components</b> (coloured by the group they end up in; band below = group of each gray value)")}
+    ${G.groups.length < fit.k ? `<p class="note" style="color:var(--warn)"><b>Merging changed the result:</b> ${fit.k} fitted components became ${G.groups.length} group(s)${G.groups.length === 1 ? " — the merged result has no boundaries at all" : ""}. Compare “GMM components (no merging)” with “GMM groups (merged)” in tabs 4 and 5 to see whether a missing boundary was lost in the fit or in the merge.</p>` : ""}
+    ${img("histogram_gmm", "<b>Fitted components</b> (curve colour = component; upper band = most probable component of each gray value, no merging; lower band = group after merging)")}
     <div class="grid2"><div><h3>Components</h3><table><tr><th class="l">component</th><th>mean</th><th>σ</th><th>weight</th><th class="l">group</th></tr>` +
     fit.means.map((m, j) => `<tr><td class="l">C${j+1}</td><td>${f(m,2)}</td><td>${f(fit.sigmas[j],2)}</td><td>${f(fit.weights[j],4)}</td><td class="l">${sw(cg[j])}</td></tr>`).join("") +
     `</table><h3>Separation matrix (Ashman's D)</h3>${sepT}<h3>Groups (moment-matched)</h3><table><tr><th class="l">group</th><th class="l">components</th><th>mean</th><th>σ</th><th>weight</th></tr>${G.groups.map((g, i) => `<tr><td class="l">${sw(i)}</td><td class="l">${g.map(c => "C" + (c+1)).join(", ")}</td><td>${f(G.group_gaussians[i].mean,1)}</td><td>${f(G.group_gaussians[i].sigma,1)}</td><td>${f(G.group_gaussians[i].weight,4)}</td></tr>`).join("")}</table><h3>Gray ranges per group</h3><table><tr><th class="l">group</th><th>from</th><th>to</th></tr>` +
@@ -197,23 +198,28 @@ function render(r) {
     `</table></div><div><h3>All candidate minima: ${M.candidates.length}; kept: ${M.kept.length}</h3><table><tr><th>position</th><th class="l">removed because</th></tr>` +
     (M.removed.length ? M.removed.map(x => `<tr><td>${f(x.position,1)}</td><td class="l">${esc(x.reason)}</td></tr>`).join("") : `<tr><td colspan=2>none removed</td></tr>`) + `</table></div></div>`;
 
-  const mg = S.methods.gmm, mm = S.methods.minima;
-  $("t-mask").innerHTML = `<p class="note">Each pixel coloured by the group of its gray value. Colours are categorical (ordered by intensity) and carry no physical meaning; one group is usually many disconnected regions.
-    ${r.settings.min_region_area_px > 0 ? `Regions smaller than ${r.settings.min_region_area_px} px were re-labelled (GMM: ${mg.regions_removed_by_cleanup}, minima: ${mm.regions_removed_by_cleanup}).` : "No small-region cleanup."}</p>
-    <div class="grid2"><div>${img("mask_gmm", `<b>GMM groups</b> (${mg.groups})`)}${statsTable(mg)}</div><div>${img("mask_minima", `<b>Histogram-minimum intervals</b> (${mm.groups})`)}${statsTable(mm)}</div></div>`;
+  const mc = S.methods.gmm_components, mg = S.methods.gmm, mm = S.methods.minima;
+  const unc = m => m.uncertain_pixels ? ` · ${pct(m.uncertain_pixels / (im.width * im.height))} uncertain` : "";
+  $("t-mask").innerHTML = `<p class="note">Each pixel coloured by the label of its gray value. Colours are categorical (ordered by intensity) and carry no physical meaning; one label is usually many disconnected regions.
+    “GMM components” is the fitted mixture without merging (label = most probable component); “GMM groups” is the result after ${G.merge_rule} merging at D ≥ ${G.threshold}. Same colour index, different meaning: compare the tables, not the colours.
+    ${r.settings.min_posterior > 0 ? `Dark gray = uncertain (best posterior below ${r.settings.min_posterior}).` : ""}
+    ${r.settings.min_region_area_px > 0 ? `Regions smaller than ${r.settings.min_region_area_px} px were re-labelled (components: ${mc.regions_removed_by_cleanup}, groups: ${mg.regions_removed_by_cleanup}, minima: ${mm.regions_removed_by_cleanup}); uncertain pixels are never re-labelled.` : "No small-region cleanup."}</p>
+    <div class="grid2"><div>${img("mask_gmm_components", `<b>GMM components, no merging</b> (${mc.groups}${unc(mc)})`)}${statsTable(mc)}</div><div>${img("mask_gmm", `<b>GMM groups, after merging</b> (${mg.groups}${unc(mg)})`)}${statsTable(mg)}</div><div>${img("mask_minima", `<b>Histogram-minimum intervals</b> (${mm.groups})`)}${statsTable(mm)}</div></div>`;
 
   const vd = m => m.vs_detector;
-  const cmpRow = (name, m) => `<tr><td class="l">${name}</td><td>${m.boundary_px}</td><td>${pct(m.boundary_share_of_image)}</td><td>${f(m.boundary_step_median,0)} / ${f(m.boundary_step_p90,0)}</td>` +
+  const cmpRow = (name, m) => `<tr><td class="l">${name}</td><td>${m.boundary_px}</td><td>${m.uncertain_boundary_px}</td><td>${pct(m.boundary_share_of_image)}</td><td>${f(m.boundary_step_median,0)} / ${f(m.boundary_step_p90,0)}</td>` +
      (vd(m) ? `<td>${pct(vd(m).reference_matched)}</td><td>${pct(vd(m).candidate_matched)}</td><td>${vd(m).reference_only_px}</td><td>${vd(m).candidate_only_px}</td>` : `<td colspan=4>no detector result</td>`) + `</tr>`;
   const D = S.detector;
-  $("t-bnd").innerHTML = `<p class="note">A boundary pixel is a pixel whose right or lower neighbour has a different label. The detector (existing AIxAM geometry-detect, commit ${D ? D.commit.slice(0,7) : "—"}) reports straight lines and verified circles only, after filtering texture and soft edges, so the two outputs differ in kind: neither is ground truth.
+  $("t-bnd").innerHTML = `<p class="note">A boundary pixel is a pixel whose right or lower neighbour belongs to a different intensity group (red). Where one side is “uncertain” (only when a minimum posterior is set), the pixel marks the edge of an uncertainty band: it is drawn in yellow, counted separately and excluded from the wireframe and from every comparison. The detector (existing AIxAM geometry-detect, commit ${D ? D.commit.slice(0,7) : "—"}) reports straight lines and verified circles only, after filtering texture and soft edges, so the two outputs differ in kind: neither is ground truth.
     ${S.detector_error ? `<b style="color:var(--warn)">Detector error: ${esc(S.detector_error)}</b>` : D ? `Detector: ${D.lines} line(s), ${D.circles} circle(s), ${D.points} point(s)${D.resized_for_detection ? `, detection on a downscaled ${D.processing_size.width}×${D.processing_size.height} copy` : ""}.` : "Detector not run."}</p>
-    <table><tr><th class="l">method</th><th>boundary px</th><th>share of image</th><th>gray step across boundary (median / p90)</th><th>detector edge matched</th><th>boundary near a detector edge</th><th>detector-only px</th><th>regions-only px</th></tr>
-    ${cmpRow("GMM", mg)}${cmpRow("Histogram minima", mm)}</table>
-    <p class="legend"><span><span class="sw" style="background:rgb(60,220,60)"></span>matched (within ${r.settings.compare_tolerance_px} px)</span><span><span class="sw" style="background:rgb(0,200,255)"></span>detector only — missing from the region wireframe</span><span><span class="sw" style="background:rgb(255,60,200)"></span>regions only — not reported by the detector (inspect: real edge, texture, noise or gradient?)</span></p>
-    <div class="grid2">${img("boundaries_gmm", "<b>Region boundaries — GMM groups</b>")}${img("boundaries_minima", "<b>Region boundaries — histogram-minimum intervals</b>")}</div>
-    ${D ? `<div class="grid2">${img("compare_gmm", "<b>GMM boundaries vs detector</b>")}${img("compare_minima", "<b>Minima boundaries vs detector</b>")}</div>${img("detector", "<b>Existing detector edges</b> (lines and circles, rasterised)")}` : ""}
-    <p class="note">GMM vs minima boundaries: ${pct(S.gmm_vs_minima_boundaries.reference_matched)} of GMM boundary pixels lie within ${r.settings.compare_tolerance_px} px of a minima boundary; ${pct(S.gmm_vs_minima_boundaries.candidate_matched)} the other way. Timings (ms): ${esc(JSON.stringify(S.timings_ms))}.</p>`;
+    <table><tr><th class="l">method</th><th>boundary px</th><th>uncertainty-band edge px (excluded)</th><th>share of image</th><th>gray step across boundary (median / p90)</th><th>detector edge matched</th><th>boundary near a detector edge</th><th>detector-only px</th><th>regions-only px</th></tr>
+    ${cmpRow("GMM components (no merging)", mc)}${cmpRow("GMM groups (merged)", mg)}${cmpRow("Histogram minima", mm)}</table>
+    <p class="note">Detector columns measure agreement with the existing detector, not accuracy: neither output is ground truth.</p>
+    <p class="legend"><span><span class="sw" style="background:rgb(60,220,60)"></span>matched (within ${r.settings.compare_tolerance_px} px)</span><span><span class="sw" style="background:rgb(0,200,255)"></span>detector only — not in the region wireframe</span><span><span class="sw" style="background:rgb(255,60,200)"></span>regions only — not reported by the detector (inspect: real edge, texture, noise or gradient?)</span></p>
+    <p class="legend"><span><span class="sw" style="background:rgb(255,40,40)"></span>boundary between two groups</span><span><span class="sw" style="background:rgb(255,210,0)"></span>edge of an uncertainty band (not a wireframe edge)</span></p>
+    <div class="grid2">${img("boundaries_gmm_components", "<b>Region boundaries — GMM components, no merging</b>")}${img("boundaries_gmm", "<b>Region boundaries — GMM groups, after merging</b>")}${img("boundaries_minima", "<b>Region boundaries — histogram-minimum intervals</b>")}</div>
+    ${D ? `<div class="grid2">${img("compare_gmm_components", "<b>GMM components (no merging) vs detector</b>")}${img("compare_gmm", "<b>GMM groups (merged) vs detector</b>")}${img("compare_minima", "<b>Minima boundaries vs detector</b>")}</div>${img("detector", "<b>Existing detector edges</b> (lines and circles, rasterised)")}` : ""}
+    <p class="note">GMM groups vs minima boundaries: ${pct(S.gmm_vs_minima_boundaries.reference_matched)} of GMM group boundary pixels lie within ${r.settings.compare_tolerance_px} px of a minima boundary; ${pct(S.gmm_vs_minima_boundaries.candidate_matched)} the other way. Timings (ms): ${esc(JSON.stringify(S.timings_ms))}.</p>`;
 }
 
 async function run() {

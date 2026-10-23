@@ -49,23 +49,30 @@ def _lut_strip(ax, lut, label):
     ax.set_ylabel(label, rotation=0, ha="right", va="center", fontsize=8)
 
 
-def histogram_gmm(counts, fit: GMMFit, grouping: GMMGrouping, log=True, smoothed=None, smooth_sigma=None) -> bytes:
-    fig, (ax, strip) = plt.subplots(2, 1, figsize=(9, 4.2), sharex=True, gridspec_kw=dict(height_ratios=[12, 1]))
+def histogram_gmm(counts, fit: GMMFit, grouping: GMMGrouping, log=True, smoothed=None, smooth_sigma=None,
+                  components: GMMGrouping | None = None) -> bytes:
+    """Components are coloured by their own index (C1 = first palette colour, ...), matching the "component" band and
+    the unmerged component mask; the "group" band uses group colours, matching the merged-group mask."""
+    fig, axes = plt.subplots(3 if components is not None else 2, 1, figsize=(9, 4.6), sharex=True,
+                             gridspec_kw=dict(height_ratios=[12, 1, 1] if components is not None else [12, 1]))
+    ax, strips = axes[0], axes[1:]
     _raw_bars(ax, counts, log)
     if smoothed is not None and smooth_sigma:
         ax.plot(LEVELS, smoothed, color=SMOOTH_COLOR, lw=0.8, ls=":", label=f"smoothed (Gaussian, sigma {smooth_sigma:g})")
     curves = fit.component_curves(LEVELS)
     comp_group = {c: gi for gi, g in enumerate(grouping.groups) for c in g}
     for j in range(fit.k):
-        ax.plot(LEVELS, curves[j], color=_rgb(comp_group[j]), lw=1.6,
+        ax.plot(LEVELS, curves[j], color=_rgb(j if components is not None else comp_group[j]), lw=1.6,
                 label=f"C{j + 1}: mean {fit.means[j]:.1f}, sd {fit.sigmas[j]:.1f}, w {fit.weights[j]:.3f} -> G{comp_group[j] + 1}")
     ax.plot(LEVELS, curves.sum(axis=0), color="black", lw=1.0, ls="--", label="mixture (sum)")
     ax.set_title(f"GMM, K = {fit.k}: {len(grouping.groups)} intensity group(s), {grouping.rule} merging at D >= "
                  f"{grouping.threshold:g}",
                  fontsize=10)
     ax.legend(fontsize=7, loc="upper left", framealpha=0.85)
-    _lut_strip(strip, grouping.lut, "group")
-    strip.set_xlabel("gray value (0-255)")
+    if components is not None:
+        _lut_strip(strips[0], components.lut, "component\n(no merging)")
+    _lut_strip(strips[-1], grouping.lut, "group\n(merged)")
+    strips[-1].set_xlabel("gray value (0-255)")
     fig.tight_layout()
     return _png(fig)
 

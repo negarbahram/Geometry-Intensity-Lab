@@ -1,30 +1,53 @@
 [
  {
   "scene": "three_levels",
-  "method": "GMM K=true",
+  "method": "GMM K=true components (no merging)",
   "groups": 3,
   "true_regions": 3,
   "label_accuracy": 0.9985416666666667,
   "boundary_recall": 1.0,
-  "boundary_precision": 1.0
+  "boundary_precision": 1.0,
+  "log_likelihood": -463972.4655636931
  },
  {
   "scene": "three_levels",
-  "method": "GMM K=4 transitive",
+  "method": "GMM K=true groups",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9985416666666667,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0,
+  "log_likelihood": -463972.4655636931
+ },
+ {
+  "scene": "three_levels",
+  "method": "GMM K=4 transitive groups",
   "groups": 3,
   "true_regions": 3,
   "label_accuracy": 0.9974083333333333,
   "boundary_recall": 1.0,
-  "boundary_precision": 0.9605609114811569
+  "boundary_precision": 0.9605609114811569,
+  "log_likelihood": -462039.9433159142
  },
  {
   "scene": "three_levels",
-  "method": "GMM K=4",
+  "method": "GMM K=4 components (no merging)",
+  "groups": 4,
+  "true_regions": 3,
+  "label_accuracy": 0.9976083333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.912542372881356,
+  "log_likelihood": -462039.9433159142
+ },
+ {
+  "scene": "three_levels",
+  "method": "GMM K=4 groups",
   "groups": 3,
   "true_regions": 3,
   "label_accuracy": 0.9974083333333333,
   "boundary_recall": 1.0,
-  "boundary_precision": 0.9605609114811569
+  "boundary_precision": 0.9605609114811569,
+  "log_likelihood": -462039.9433159142
  },
  {
   "scene": "three_levels",
@@ -33,7 +56,28 @@
   "true_regions": 3,
   "label_accuracy": 0.9987833333333334,
   "boundary_recall": 1.0,
-  "boundary_precision": 1.0
+  "boundary_precision": 1.0,
+  "log_likelihood": null
+ },
+ {
+  "scene": "three_levels",
+  "method": "GMM K=4, 20 starts components (no merging)",
+  "groups": 4,
+  "true_regions": 3,
+  "label_accuracy": 0.9976083333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.912542372881356,
+  "log_likelihood": -462039.9433159142
+ },
+ {
+  "scene": "three_levels",
+  "method": "GMM K=4, 20 starts groups",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9974083333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.9605609114811569,
+  "log_likelihood": -462039.9433159142
  },
  {
   "scene": "three_levels",
@@ -60,30 +104,53 @@
  },
  {
   "scene": "close_levels",
-  "method": "GMM K=true",
-  "groups": 3,
+  "method": "GMM K=true components (no merging)",
+  "groups": 4,
   "true_regions": 4,
-  "label_accuracy": 0.839025,
+  "label_accuracy": 0.8395,
   "boundary_recall": 0.8711554447215295,
-  "boundary_precision": 0.9974182444061962
+  "boundary_precision": 0.9847068819031436,
+  "log_likelihood": -483437.8740224994
  },
  {
   "scene": "close_levels",
-  "method": "GMM K=4 transitive",
+  "method": "GMM K=true groups",
   "groups": 3,
   "true_regions": 4,
   "label_accuracy": 0.839025,
   "boundary_recall": 0.8711554447215295,
-  "boundary_precision": 0.9974182444061962
+  "boundary_precision": 0.9974182444061962,
+  "log_likelihood": -483437.8740224994
  },
  {
   "scene": "close_levels",
-  "method": "GMM K=4",
+  "method": "GMM K=4 transitive groups",
   "groups": 3,
   "true_regions": 4,
   "label_accuracy": 0.839025,
   "boundary_recall": 0.8711554447215295,
-  "boundary_precision": 0.9974182444061962
+  "boundary_precision": 0.9974182444061962,
+  "log_likelihood": -483437.8740224994
+ },
+ {
+  "scene": "close_levels",
+  "method": "GMM K=4 components (no merging)",
+  "groups": 4,
+  "true_regions": 4,
+  "label_accuracy": 0.8395,
+  "boundary_recall": 0.8711554447215295,
+  "boundary_precision": 0.9847068819031436,
+  "log_likelihood": -483437.8740224994
+ },
+ {
+  "scene": "close_levels",
+  "method": "GMM K=4 groups",
+  "groups": 3,
+  "true_regions": 4,
+  "label_accuracy": 0.839025,
+  "boundary_recall": 0.8711554447215295,
+  "boundary_precision": 0.9974182444061962,
+  "log_likelihood": -483437.8740224994
  },
  {
   "scene": "close_levels",
@@ -92,7 +159,28 @@
   "true_regions": 4,
   "label_accuracy": 0.839525,
   "boundary_recall": 0.8711554447215295,
-  "boundary_precision": 1.0
+  "boundary_precision": 1.0,
+  "log_likelihood": null
+ },
+ {
+  "scene": "close_levels",
+  "method": "GMM K=4, 20 starts components (no merging)",
+  "groups": 4,
+  "true_regions": 4,
+  "label_accuracy": 0.8395,
+  "boundary_recall": 0.8711554447215295,
+  "boundary_precision": 0.9847068819031436,
+  "log_likelihood": -483437.8740224994
+ },
+ {
+  "scene": "close_levels",
+  "method": "GMM K=4, 20 starts groups",
+  "groups": 3,
+  "true_regions": 4,
+  "label_accuracy": 0.839025,
+  "boundary_recall": 0.8711554447215295,
+  "boundary_precision": 0.9974182444061962,
+  "log_likelihood": -483437.8740224994
  },
  {
   "scene": "close_levels",
@@ -119,30 +207,53 @@
  },
  {
   "scene": "small_bright_spot",
-  "method": "GMM K=true",
+  "method": "GMM K=true components (no merging)",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9957583333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.9362340585146287,
+  "log_likelihood": -433969.7608967036
+ },
+ {
+  "scene": "small_bright_spot",
+  "method": "GMM K=true groups",
   "groups": 2,
   "true_regions": 3,
   "label_accuracy": 0.9941083333333334,
   "boundary_recall": 1.0,
-  "boundary_precision": 0.9671132764920828
+  "boundary_precision": 0.9671132764920828,
+  "log_likelihood": -433969.7608967036
  },
  {
   "scene": "small_bright_spot",
-  "method": "GMM K=4 transitive",
+  "method": "GMM K=4 transitive groups",
   "groups": 2,
   "true_regions": 3,
   "label_accuracy": 0.9942333333333333,
   "boundary_recall": 1.0,
-  "boundary_precision": 0.9851116625310173
+  "boundary_precision": 0.9851116625310173,
+  "log_likelihood": -433966.49388828326
  },
  {
   "scene": "small_bright_spot",
-  "method": "GMM K=4",
+  "method": "GMM K=4 components (no merging)",
+  "groups": 4,
+  "true_regions": 3,
+  "label_accuracy": 0.9957583333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.05041544693811171,
+  "log_likelihood": -433966.49388828326
+ },
+ {
+  "scene": "small_bright_spot",
+  "method": "GMM K=4 groups",
   "groups": 2,
   "true_regions": 3,
   "label_accuracy": 0.9942333333333333,
   "boundary_recall": 1.0,
-  "boundary_precision": 0.9851116625310173
+  "boundary_precision": 0.9851116625310173,
+  "log_likelihood": -433966.49388828326
  },
  {
   "scene": "small_bright_spot",
@@ -151,7 +262,28 @@
   "true_regions": 3,
   "label_accuracy": 0.9989916666666666,
   "boundary_recall": 1.0,
-  "boundary_precision": 1.0
+  "boundary_precision": 1.0,
+  "log_likelihood": null
+ },
+ {
+  "scene": "small_bright_spot",
+  "method": "GMM K=4, 20 starts components (no merging)",
+  "groups": 4,
+  "true_regions": 3,
+  "label_accuracy": 0.99785,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.9683496608892238,
+  "log_likelihood": -433150.8168321807
+ },
+ {
+  "scene": "small_bright_spot",
+  "method": "GMM K=4, 20 starts groups",
+  "groups": 4,
+  "true_regions": 3,
+  "label_accuracy": 0.99785,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.9683496608892238,
+  "log_likelihood": -433150.8168321807
  },
  {
   "scene": "small_bright_spot",
@@ -178,30 +310,53 @@
  },
  {
   "scene": "blurred_edges",
-  "method": "GMM K=true",
+  "method": "GMM K=true components (no merging)",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9755916666666666,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.552674672489083,
+  "log_likelihood": -481815.198584311
+ },
+ {
+  "scene": "blurred_edges",
+  "method": "GMM K=true groups",
   "groups": 2,
   "true_regions": 3,
   "label_accuracy": 0.9358,
   "boundary_recall": 0.8995633187772926,
-  "boundary_precision": 0.8111702127659575
+  "boundary_precision": 0.8111702127659575,
+  "log_likelihood": -481815.198584311
  },
  {
   "scene": "blurred_edges",
-  "method": "GMM K=4 transitive",
+  "method": "GMM K=4 transitive groups",
   "groups": 3,
   "true_regions": 3,
   "label_accuracy": 0.9818416666666666,
   "boundary_recall": 0.9486899563318777,
-  "boundary_precision": 0.6392443631931749
+  "boundary_precision": 0.6392443631931749,
+  "log_likelihood": -474520.7925692681
  },
  {
   "scene": "blurred_edges",
-  "method": "GMM K=4",
+  "method": "GMM K=4 components (no merging)",
+  "groups": 4,
+  "true_regions": 3,
+  "label_accuracy": 0.9833083333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.6128219484882419,
+  "log_likelihood": -474520.7925692681
+ },
+ {
+  "scene": "blurred_edges",
+  "method": "GMM K=4 groups",
   "groups": 3,
   "true_regions": 3,
   "label_accuracy": 0.9818416666666666,
   "boundary_recall": 0.9486899563318777,
-  "boundary_precision": 0.6392443631931749
+  "boundary_precision": 0.6392443631931749,
+  "log_likelihood": -474520.7925692681
  },
  {
   "scene": "blurred_edges",
@@ -210,7 +365,28 @@
   "true_regions": 3,
   "label_accuracy": 0.9921416666666667,
   "boundary_recall": 0.9956331877729258,
-  "boundary_precision": 0.9977046671767407
+  "boundary_precision": 0.9977046671767407,
+  "log_likelihood": null
+ },
+ {
+  "scene": "blurred_edges",
+  "method": "GMM K=4, 20 starts components (no merging)",
+  "groups": 4,
+  "true_regions": 3,
+  "label_accuracy": 0.9833083333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.6128219484882419,
+  "log_likelihood": -474520.7925692681
+ },
+ {
+  "scene": "blurred_edges",
+  "method": "GMM K=4, 20 starts groups",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9818416666666666,
+  "boundary_recall": 0.9486899563318777,
+  "boundary_precision": 0.6392443631931749,
+  "log_likelihood": -474520.7925692681
  },
  {
   "scene": "blurred_edges",
@@ -237,30 +413,53 @@
  },
  {
   "scene": "illumination_ramp",
-  "method": "GMM K=true",
+  "method": "GMM K=true components (no merging)",
   "groups": 2,
   "true_regions": 2,
   "label_accuracy": 0.9975583333333333,
   "boundary_recall": 1.0,
-  "boundary_precision": 0.7147971360381862
+  "boundary_precision": 0.7147971360381862,
+  "log_likelihood": -586243.3976328842
  },
  {
   "scene": "illumination_ramp",
-  "method": "GMM K=4 transitive",
+  "method": "GMM K=true groups",
+  "groups": 2,
+  "true_regions": 2,
+  "label_accuracy": 0.9975583333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.7147971360381862,
+  "log_likelihood": -586243.3976328842
+ },
+ {
+  "scene": "illumination_ramp",
+  "method": "GMM K=4 transitive groups",
   "groups": 4,
   "true_regions": 2,
   "label_accuracy": 0.9986333333333334,
   "boundary_recall": 1.0,
-  "boundary_precision": 0.06666666666666667
+  "boundary_precision": 0.06666666666666667,
+  "log_likelihood": -570020.2914955295
  },
  {
   "scene": "illumination_ramp",
-  "method": "GMM K=4",
+  "method": "GMM K=4 components (no merging)",
   "groups": 4,
   "true_regions": 2,
   "label_accuracy": 0.9986333333333334,
   "boundary_recall": 1.0,
-  "boundary_precision": 0.06666666666666667
+  "boundary_precision": 0.06666666666666667,
+  "log_likelihood": -570020.2914955295
+ },
+ {
+  "scene": "illumination_ramp",
+  "method": "GMM K=4 groups",
+  "groups": 4,
+  "true_regions": 2,
+  "label_accuracy": 0.9986333333333334,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.06666666666666667,
+  "log_likelihood": -570020.2914955295
  },
  {
   "scene": "illumination_ramp",
@@ -269,7 +468,28 @@
   "true_regions": 2,
   "label_accuracy": 0.99885,
   "boundary_recall": 1.0,
-  "boundary_precision": 0.14582986515731647
+  "boundary_precision": 0.14582986515731647,
+  "log_likelihood": null
+ },
+ {
+  "scene": "illumination_ramp",
+  "method": "GMM K=4, 20 starts components (no merging)",
+  "groups": 4,
+  "true_regions": 2,
+  "label_accuracy": 0.9986333333333334,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.06496871642545661,
+  "log_likelihood": -570019.7052268557
+ },
+ {
+  "scene": "illumination_ramp",
+  "method": "GMM K=4, 20 starts groups",
+  "groups": 4,
+  "true_regions": 2,
+  "label_accuracy": 0.9986333333333334,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.06496871642545661,
+  "log_likelihood": -570019.7052268557
  },
  {
   "scene": "illumination_ramp",
@@ -296,30 +516,53 @@
  },
  {
   "scene": "noise_free",
-  "method": "GMM K=true",
+  "method": "GMM K=true components (no merging)",
   "groups": 3,
   "true_regions": 3,
   "label_accuracy": 0.99585,
   "boundary_recall": 1.0,
-  "boundary_precision": 1.0
+  "boundary_precision": 1.0,
+  "log_likelihood": -234458.2788967275
  },
  {
   "scene": "noise_free",
-  "method": "GMM K=4 transitive",
+  "method": "GMM K=true groups",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.99585,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0,
+  "log_likelihood": -234458.2788967275
+ },
+ {
+  "scene": "noise_free",
+  "method": "GMM K=4 transitive groups",
   "groups": 2,
   "true_regions": 3,
   "label_accuracy": 0.85205,
   "boundary_recall": 0.3351528384279476,
-  "boundary_precision": 1.0
+  "boundary_precision": 1.0,
+  "log_likelihood": -190946.75514645892
  },
  {
   "scene": "noise_free",
-  "method": "GMM K=4",
+  "method": "GMM K=4 components (no merging)",
+  "groups": 4,
+  "true_regions": 3,
+  "label_accuracy": 0.9965,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0,
+  "log_likelihood": -190946.75514645892
+ },
+ {
+  "scene": "noise_free",
+  "method": "GMM K=4 groups",
   "groups": 3,
   "true_regions": 3,
   "label_accuracy": 0.9955166666666667,
   "boundary_recall": 1.0,
-  "boundary_precision": 1.0
+  "boundary_precision": 1.0,
+  "log_likelihood": -190946.75514645892
  },
  {
   "scene": "noise_free",
@@ -328,7 +571,28 @@
   "true_regions": 3,
   "label_accuracy": 0.99885,
   "boundary_recall": 1.0,
-  "boundary_precision": 1.0
+  "boundary_precision": 1.0,
+  "log_likelihood": null
+ },
+ {
+  "scene": "noise_free",
+  "method": "GMM K=4, 20 starts components (no merging)",
+  "groups": 4,
+  "true_regions": 3,
+  "label_accuracy": 0.9965,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0,
+  "log_likelihood": -190946.75514645892
+ },
+ {
+  "scene": "noise_free",
+  "method": "GMM K=4, 20 starts groups",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9955166666666667,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0,
+  "log_likelihood": -190946.75514645892
  },
  {
   "scene": "noise_free",

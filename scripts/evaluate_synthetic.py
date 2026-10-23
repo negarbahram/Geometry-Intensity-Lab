@@ -42,20 +42,29 @@ def main():
         truth_b = boundaries.boundary_mask(sc.labels)
         Image.fromarray(np.where(truth_b, 255, 0).astype(np.uint8)).save(d / "true_boundaries.png")
         n_true = len(np.unique(sc.labels))
-        for k_label, k, rule in (("K=true", max(n_true, 2), "hierarchical"), ("K=4 transitive", 4, "transitive"),
-                                 ("K=4", 4, "hierarchical")):
-            s = experiment.Settings(dataset=None, image=str(p), gmm_k=k, gmm_sweep_max_k=6, merge_rule=rule)
+        # (label, K, merge rule, EM starts). "components" rows are the same fit without merging, so a failure can be
+        # traced to the fit or to the merge; the 20-start rows test sensitivity to initialisation.
+        variants = (("K=true", max(n_true, 2), "hierarchical", 5), ("K=4 transitive", 4, "transitive", 5),
+                    ("K=4", 4, "hierarchical", 5), ("K=4, 20 starts", 4, "hierarchical", 20))
+        for k_label, k, rule, n_init in variants:
+            s = experiment.Settings(dataset=None, image=str(p), gmm_k=k, gmm_sweep_max_k=6, merge_rule=rule,
+                                    gmm_n_init=n_init)
             r = experiment.run(s)
             if k_label == "K=4":
                 experiment.save(r, d / "experiment_default")
             for name, m in r.methods.items():
                 if name == "minima" and k_label != "K=4":
                     continue                                  # minima does not depend on K
+                if name == "gmm_components" and rule == "transitive":
+                    continue                                  # identical to the hierarchical run's components
+                label = {"gmm": f"GMM {k_label} groups", "gmm_components": f"GMM {k_label} components (no merging)",
+                         "minima": "histogram minima"}[name]
                 c = compare.compare(truth_b, m.boundary, TOL)
-                rows.append({"scene": sc.name, "method": "GMM " + k_label if name == "gmm" else "histogram minima",
-                             "groups": len(m.stats), "true_regions": n_true,
+                rows.append({"scene": sc.name, "method": label,
+                             "groups": sum(st["group"] >= 0 for st in m.stats), "true_regions": n_true,
                              "label_accuracy": majority_accuracy(m.labels, sc.labels),
-                             "boundary_recall": c["reference_matched"], "boundary_precision": c["candidate_matched"]})
+                             "boundary_recall": c["reference_matched"], "boundary_precision": c["candidate_matched"],
+                             "log_likelihood": r.fit.log_likelihood if name != "minima" else None})
         det = r.detector_doc
         if det is not None:
             dm = detector.rasterize(det, sc.gray.shape)
@@ -67,7 +76,8 @@ def main():
         print(sc.name, "done")
     (OUT / "results.json").write_text(json.dumps(rows, indent=1, default=float))
     fmt = lambda x: "—" if x is None else f"{x:.3f}"  # noqa: E731
-    lines = [f"Boundary recall/precision: share of true / predicted boundary pixels within {TOL:g} px of the other.",
+    lines = ["One noise seed per scene; GMM uses the stated K and EM starts. Results hold for these settings only.",
+             f"Boundary recall/precision: share of true / predicted boundary pixels within {TOL:g} px of the other.",
              "Label accuracy: each predicted group mapped to its majority true region (does not penalise extra groups).",
              "", "| scene | method | groups / true | label accuracy | boundary recall | boundary precision |",
              "| --- | --- | ---: | ---: | ---: | ---: |"]

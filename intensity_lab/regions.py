@@ -25,12 +25,15 @@ def apply_lut(gray: np.ndarray, lut: np.ndarray) -> np.ndarray:
 
 def remove_small_regions(labels: np.ndarray, min_area: int) -> tuple[np.ndarray, int]:
     """Connected regions (8-connectivity, per label) smaller than `min_area` pixels are given the label of the nearest
-    pixel that belongs to a large-enough region. Returns the new map and the number of regions removed. 0 = off."""
+    pixel that belongs to a large-enough region. Returns the new map and the number of regions removed. 0 = off.
+    Uncertain pixels (-1) are never relabelled and never used as the source of a fill."""
     if min_area <= 1:
         return labels, 0
     small = np.zeros(labels.shape, dtype=bool)
     removed = 0
     for g in np.unique(labels):
+        if g == UNCERTAIN:
+            continue
         cc, n = ndimage.label(labels == g, structure=EIGHT)
         if n == 0:
             continue
@@ -42,10 +45,13 @@ def remove_small_regions(labels: np.ndarray, min_area: int) -> tuple[np.ndarray,
             removed += len(bad)
     if not small.any():
         return labels, 0
-    if small.all():
+    source = (labels != UNCERTAIN) & ~small
+    if not source.any():
         return labels, 0                                   # nothing large enough to fill from: leave unchanged
-    _, (iy, ix) = ndimage.distance_transform_edt(small, return_indices=True)
-    return labels[iy, ix], removed
+    _, (iy, ix) = ndimage.distance_transform_edt(~source, return_indices=True)
+    out = labels.copy()
+    out[small] = labels[iy, ix][small]
+    return out, removed
 
 
 def overlay(gray: np.ndarray, labels: np.ndarray, alpha: float = 0.55) -> np.ndarray:

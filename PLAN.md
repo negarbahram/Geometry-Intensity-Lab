@@ -43,9 +43,11 @@ tests/                  pytest, synthetic only
    quantile initialisation plus seeded restarts; σ floor (default 1 gray level) so a clipped spike (e.g. 255) does not
    collapse to zero variance. BIC/AIC computed for K = 1…10 as information, not as an automatic choice.
 4. **Separation and overlap**: Ashman's D = |μ₁−μ₂| / √((σ₁²+σ₂²)/2) for every pair of components; D ≥ threshold
-   (default 2.0) counts as separated. Components linked by any pair below the threshold are merged into one intensity group
-   (transitive). Each gray value goes to the group with the highest summed posterior; optionally values whose best group
-   posterior is below a minimum are labelled "uncertain". A group may therefore own non-contiguous intensity ranges.
+   (default 2.0) counts as separated. Implemented: hierarchical merging (default; least-separated pair first, merged
+   groups replaced by their moment-matched Gaussian) or transitive merging (option), plus the unmerged component labels
+   shown alongside so fitting and merging failures can be told apart. Each gray value goes to the group with the highest
+   summed posterior; optionally values whose best posterior is below a minimum are labelled "uncertain", and edges of
+   uncertain bands are kept out of the wireframe. A group may therefore own non-contiguous intensity ranges.
 5. **Histogram minima**: local minima of the smoothed histogram (linear or log(1+count) scale), plateau → its centre;
    minima are removed shallowest-first while their relative depth (min(neighbouring peaks) − value) / min(peaks) is below
    a threshold. Thresholds split 0…255 into contiguous intervals.

@@ -43,8 +43,10 @@ Then open http://127.0.0.1:8765. Choose a dataset, camera folder and image, adju
 2. **GMM components**: fitted components, the Ashman's D separation matrix, the resulting groups and their gray ranges,
    and BIC/AIC and fits for K = 1…8.
 3. **Histogram-minimum intervals**: smoothed histogram, kept and rejected minima, and the intervals.
-4. **Region masks**: coloured overlays for both methods, with per-group statistics including the number of connected regions.
-5. **Boundaries vs detector**: region boundaries for both methods, the detector's edges, and overlays of matched
+4. **Region masks**: coloured overlays for the GMM components (no merging), the GMM groups (after merging) and the
+   minima intervals, with per-group statistics including the number of connected regions.
+5. **Boundaries vs detector**: region boundaries for all three labellings (edges of "uncertain" bands in yellow, kept
+   out of the wireframe), the detector's edges, and overlays of matched
    (green), detector-only (cyan, missing from the regions) and regions-only (magenta) boundaries.
 
 Click an image to open it at full resolution. **Save settings and outputs** writes `outputs/<time>_<image>[_label]/`
@@ -61,8 +63,9 @@ Large Isaac Sim images (2592x1942) take about 5 s per run; product images 2–4 
 ## Tests and evaluation
 
 ```bash
-.venv/bin/python -m pytest                          # 22 focused checks on synthetic data (about 5 s)
+.venv/bin/python -m pytest                          # 27 focused checks on synthetic data (about 5 s)
 .venv/bin/python scripts/evaluate_synthetic.py      # examples/synthetic/: accuracy against known regions
+.venv/bin/python scripts/check_initialisation.py    # GMM: default fit vs EM started at the true parameters
 .venv/bin/python scripts/make_examples.py examples  # examples/<dataset>/: saved outputs of selected images
 .venv/bin/python scripts/make_examples.py aggregate # examples/aggregate.{csv,md}: every distinct image (~10 min)
 ```

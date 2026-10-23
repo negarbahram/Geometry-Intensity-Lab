@@ -138,7 +138,7 @@ def separation_matrix(fit: GMMFit) -> np.ndarray:
     return d
 
 
-MERGE_RULES = ("hierarchical", "transitive")
+MERGE_RULES = ("hierarchical", "transitive", "none")
 
 
 def moment_match(fit: GMMFit, comps: list[int]) -> tuple[float, float, float]:
@@ -158,9 +158,12 @@ def merge_groups(fit: GMMFit, threshold: float, rule: str = "hierarchical") -> l
       broad low-weight component (typically edge pixels between two levels) joins one neighbour, not both.
     transitive: components linked by any pair with D < threshold form one group (union-find). Simple, but one broad
       component overlapping two separated levels chains them together.
+    none: no merging; every component is its own group (the raw GMM assignment).
     Groups are ordered by their weighted mean intensity."""
     if rule not in MERGE_RULES:
         raise ValueError(f"merge rule must be one of {MERGE_RULES}")
+    if rule == "none":
+        return [[i] for i in range(fit.k)]                 # component order (= ascending mean) is the label order
     if rule == "transitive":
         parent = list(range(fit.k))
 
@@ -220,3 +223,8 @@ def group_lut(fit: GMMFit, threshold: float, min_posterior: float = 0.0, rule: s
         lut[certainty < min_posterior] = -1
     return GMMGrouping(groups=groups, lut=lut, certainty=certainty, threshold=threshold, min_posterior=min_posterior,
                        rule=rule)
+
+
+def component_lut(fit: GMMFit, min_posterior: float = 0.0) -> GMMGrouping:
+    """The unmerged assignment: each gray value goes to its most probable component."""
+    return group_lut(fit, threshold=0.0, min_posterior=min_posterior, rule="none")

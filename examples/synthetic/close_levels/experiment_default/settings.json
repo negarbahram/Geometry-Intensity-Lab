@@ -20,7 +20,7 @@
     "histogram_log_scale": true
   },
   "software": {
-    "lab_commit": null,
+    "lab_commit": "e1f4635817c10c9f5da04e78bccdd6f2fa4fa28f-dirty",
     "python": "3.12.2",
     "numpy": "2.3.5",
     "scipy": "1.17.0",
