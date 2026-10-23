@@ -1,0 +1,240 @@
+{
+ "schema": "aixam.geometry.detection.v1",
+ "status": "ok",
+ "image": {
+  "sha256": "236459a21bfb828d8ba43637ceae0c8d3f228db440e1242b3e07fe92b0a3eb26",
+  "media_type": "image/png",
+  "width": 6144,
+  "height": 550,
+  "bytes": 1315164
+ },
+ "coordinate_convention": "Source pixels of the decoded image: origin at the outer top-left corner of the first pixel, x grows right, y grows down. Identical to the grid the application shows and measures on.",
+ "transforms": {
+  "orientation": "EXIF orientation applied by the decoder, as a browser displays the file",
+  "processing_scale_x": 0.208333,
+  "processing_scale_y": 0.209091,
+  "resized_for_detection": true,
+  "processing_size": {
+   "width": 1280,
+   "height": 115
+  },
+  "cropped": false,
+  "valid_region": {
+   "x": 316.8,
+   "y": 0,
+   "w": 5510.4,
+   "h": 550
+  },
+  "note": "Detection may run on a downscaled copy of large images. Every coordinate in this result is already mapped back to the full-resolution source grid. Nothing is cropped; pixels in screenshot borders or padding (valid_region excludes them) are not searched."
+ },
+ "detector": {
+  "name": "opencv-geometry-detect",
+  "version": "2.0.0",
+  "library": "opencv 4.11.0",
+  "pipeline_version": "2.0.0",
+  "role": "preliminary detection assistance",
+  "derived": {
+   "canny_thresholds": {
+    "low": 10.67,
+    "high": 21.34
+   }
+  }
+ },
+ "disclaimer": "Preliminary detection assistance for choosing points. Not validated dimensional inspection: no calibration, no confidence, and not an AIxAM measurement or verdict.",
+ "points": [
+  {
+   "id": "p001",
+   "type": "line_end",
+   "x": 2006.79,
+   "y": 2.98,
+   "priority": "secondary",
+   "rank": 0.641,
+   "edge_ids": [
+    "e004"
+   ]
+  },
+  {
+   "id": "p002",
+   "type": "line_end",
+   "x": 3887.03,
+   "y": 2.93,
+   "priority": "secondary",
+   "rank": 0.641,
+   "edge_ids": [
+    "e001"
+   ]
+  },
+  {
+   "id": "p003",
+   "type": "line_end",
+   "x": 4447.99,
+   "y": 2.97,
+   "priority": "secondary",
+   "rank": 0.641,
+   "edge_ids": [
+    "e002"
+   ]
+  },
+  {
+   "id": "p004",
+   "type": "line_end",
+   "x": 3338.87,
+   "y": 155.9,
+   "priority": "secondary",
+   "rank": 0.552,
+   "edge_ids": [
+    "e005"
+   ]
+  },
+  {
+   "id": "p005",
+   "type": "line_end",
+   "x": 3537.32,
+   "y": 154.05,
+   "priority": "secondary",
+   "rank": 0.552,
+   "edge_ids": [
+    "e005"
+   ]
+  },
+  {
+   "id": "p006",
+   "type": "line_end",
+   "x": 2006.82,
+   "y": 541.03,
+   "priority": "secondary",
+   "rank": 0.641,
+   "edge_ids": [
+    "e004"
+   ]
+  },
+  {
+   "id": "p007",
+   "type": "line_end",
+   "x": 3886.82,
+   "y": 541.07,
+   "priority": "secondary",
+   "rank": 0.641,
+   "edge_ids": [
+    "e001"
+   ]
+  },
+  {
+   "id": "p008",
+   "type": "line_end",
+   "x": 4446.56,
+   "y": 541.1,
+   "priority": "secondary",
+   "rank": 0.641,
+   "edge_ids": [
+    "e002"
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "e001",
+   "type": "line",
+   "polyline": [
+    [
+     3886.82,
+     541.07
+    ],
+    [
+     3887.03,
+     2.93
+    ]
+   ],
+   "length_px": 538.1,
+   "point_ids": [
+    "p002",
+    "p007"
+   ]
+  },
+  {
+   "id": "e002",
+   "type": "line",
+   "polyline": [
+    [
+     4446.56,
+     541.1
+    ],
+    [
+     4447.99,
+     2.97
+    ]
+   ],
+   "length_px": 538.1,
+   "point_ids": [
+    "p003",
+    "p008"
+   ]
+  },
+  {
+   "id": "e003",
+   "type": "line",
+   "polyline": [
+    [
+     3937.09,
+     2.96
+    ],
+    [
+     3938.58,
+     541.07
+    ]
+   ],
+   "length_px": 538.1,
+   "point_ids": []
+  },
+  {
+   "id": "e004",
+   "type": "line",
+   "polyline": [
+    [
+     2006.79,
+     2.98
+    ],
+    [
+     2006.82,
+     541.03
+    ]
+   ],
+   "length_px": 538.1,
+   "point_ids": [
+    "p001",
+    "p006"
+   ]
+  },
+  {
+   "id": "e005",
+   "type": "line",
+   "polyline": [
+    [
+     3537.32,
+     154.05
+    ],
+    [
+     3338.87,
+     155.9
+    ]
+   ],
+   "length_px": 198.5,
+   "point_ids": [
+    "p004",
+    "p005"
+   ]
+  }
+ ],
+ "timing_ms": 46,
+ "timing": {
+  "decode_ms": 17.5,
+  "detect_ms": 9.9,
+  "total_ms": 46.3
+ },
+ "_lab": {
+  "detector_input": "/Users/apple/Downloads/Geometry-Intensity-Lab/cache/detector/inputs/3ea28c21bd5fcc18ef6cb57727b1b7c22ee2cf50fbfc807d6f516fcb82a4988f.png",
+  "cli": "/Users/apple/Downloads/Geometry-Intensity-Lab/third_party/geometry-detect-build/geometry-detect-cli",
+  "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c",
+  "overrides": {}
+ }
+}

@@ -1,0 +1,225 @@
+{
+ "schema": "aixam.geometry.detection.v1",
+ "status": "ok",
+ "image": {
+  "sha256": "12907f1779559f32c0c83ac25be7c957f10ab45a6912c62b0a003b25b0811f4b",
+  "media_type": "image/png",
+  "width": 2592,
+  "height": 1942,
+  "bytes": 1967355
+ },
+ "coordinate_convention": "Source pixels of the decoded image: origin at the outer top-left corner of the first pixel, x grows right, y grows down. Identical to the grid the application shows and measures on.",
+ "transforms": {
+  "orientation": "EXIF orientation applied by the decoder, as a browser displays the file",
+  "processing_scale_x": 0.493827,
+  "processing_scale_y": 0.493821,
+  "resized_for_detection": true,
+  "processing_size": {
+   "width": 1280,
+   "height": 959
+  },
+  "cropped": false,
+  "valid_region": {
+   "x": 0,
+   "y": 0,
+   "w": 2531.25,
+   "h": 1881.25
+  },
+  "note": "Detection may run on a downscaled copy of large images. Every coordinate in this result is already mapped back to the full-resolution source grid. Nothing is cropped; pixels in screenshot borders or padding (valid_region excludes them) are not searched."
+ },
+ "detector": {
+  "name": "opencv-geometry-detect",
+  "version": "2.0.0",
+  "library": "opencv 4.11.0",
+  "pipeline_version": "2.0.0",
+  "role": "preliminary detection assistance",
+  "derived": {
+   "canny_thresholds": {
+    "low": 2.8,
+    "high": 5.59
+   }
+  }
+ },
+ "disclaimer": "Preliminary detection assistance for choosing points. Not validated dimensional inspection: no calibration, no confidence, and not an AIxAM measurement or verdict.",
+ "points": [
+  {
+   "id": "p001",
+   "type": "line_end",
+   "x": 113.59,
+   "y": 1167.62,
+   "priority": "secondary",
+   "rank": 0.631,
+   "edge_ids": [
+    "e002"
+   ]
+  },
+  {
+   "id": "p002",
+   "type": "line_end",
+   "x": 279.81,
+   "y": 1300.27,
+   "priority": "secondary",
+   "rank": 0.631,
+   "edge_ids": [
+    "e002",
+    "e004"
+   ]
+  },
+  {
+   "id": "p003",
+   "type": "line_end",
+   "x": 411.15,
+   "y": 1388.67,
+   "priority": "secondary",
+   "rank": 0.597,
+   "edge_ids": [
+    "e004",
+    "e005"
+   ]
+  },
+  {
+   "id": "p004",
+   "type": "line_end",
+   "x": 530.55,
+   "y": 1456.22,
+   "priority": "secondary",
+   "rank": 0.598,
+   "edge_ids": [
+    "e003",
+    "e005"
+   ]
+  },
+  {
+   "id": "p005",
+   "type": "line_end",
+   "x": 674.64,
+   "y": 1524.91,
+   "priority": "secondary",
+   "rank": 0.632,
+   "edge_ids": [
+    "e001",
+    "e003"
+   ]
+  },
+  {
+   "id": "p006",
+   "type": "line_end",
+   "x": 877.26,
+   "y": 1595.47,
+   "priority": "secondary",
+   "rank": 0.632,
+   "edge_ids": [
+    "e001"
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "e001",
+   "type": "line",
+   "polyline": [
+    [
+     674.64,
+     1524.91
+    ],
+    [
+     877.26,
+     1595.47
+    ]
+   ],
+   "length_px": 214.5,
+   "point_ids": [
+    "p005",
+    "p006"
+   ]
+  },
+  {
+   "id": "e002",
+   "type": "line",
+   "polyline": [
+    [
+     113.59,
+     1167.62
+    ],
+    [
+     279.81,
+     1300.27
+    ]
+   ],
+   "length_px": 212.7,
+   "point_ids": [
+    "p001",
+    "p002"
+   ]
+  },
+  {
+   "id": "e003",
+   "type": "line",
+   "polyline": [
+    [
+     530.55,
+     1456.22
+    ],
+    [
+     674.26,
+     1523.24
+    ]
+   ],
+   "length_px": 158.6,
+   "point_ids": [
+    "p004",
+    "p005"
+   ]
+  },
+  {
+   "id": "e004",
+   "type": "line",
+   "polyline": [
+    [
+     279.87,
+     1302.11
+    ],
+    [
+     411.15,
+     1388.67
+    ]
+   ],
+   "length_px": 157.3,
+   "point_ids": [
+    "p002",
+    "p003"
+   ]
+  },
+  {
+   "id": "e005",
+   "type": "line",
+   "polyline": [
+    [
+     412.41,
+     1388.4
+    ],
+    [
+     531.49,
+     1457.21
+    ]
+   ],
+   "length_px": 137.5,
+   "point_ids": [
+    "p003",
+    "p004"
+   ]
+  }
+ ],
+ "timing_ms": 265,
+ "timing": {
+  "decode_ms": 56.5,
+  "detect_ms": 187.5,
+  "total_ms": 265.6
+ },
+ "_lab": {
+  "detector_input": "/Users/apple/Downloads/Geometry-Replay-Datasets/isaacsim-images/top/isaacsim-samples/rgb_0317.png",
+  "cli": "/Users/apple/Downloads/Geometry-Intensity-Lab/third_party/geometry-detect-build/geometry-detect-cli",
+  "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c",
+  "overrides": {}
+ }
+}

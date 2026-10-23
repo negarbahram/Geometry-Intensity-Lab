@@ -1,0 +1,356 @@
+[
+ {
+  "scene": "three_levels",
+  "method": "GMM K=true",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9985416666666667,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0
+ },
+ {
+  "scene": "three_levels",
+  "method": "GMM K=4 transitive",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9974083333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.9605609114811569
+ },
+ {
+  "scene": "three_levels",
+  "method": "GMM K=4",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9974083333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.9605609114811569
+ },
+ {
+  "scene": "three_levels",
+  "method": "histogram minima",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9987833333333334,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0
+ },
+ {
+  "scene": "three_levels",
+  "method": "existing detector",
+  "groups": null,
+  "true_regions": 3,
+  "label_accuracy": null,
+  "boundary_recall": 0.6648471615720524,
+  "boundary_precision": 1.0,
+  "detector": {
+   "status": "ok",
+   "points": 4,
+   "lines": 4,
+   "circles": 0,
+   "line_length_px": 533.2,
+   "resized_for_detection": false,
+   "processing_size": {
+    "width": 400,
+    "height": 300
+   },
+   "version": "2.0.0",
+   "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c"
+  }
+ },
+ {
+  "scene": "close_levels",
+  "method": "GMM K=true",
+  "groups": 3,
+  "true_regions": 4,
+  "label_accuracy": 0.839025,
+  "boundary_recall": 0.8711554447215295,
+  "boundary_precision": 0.9974182444061962
+ },
+ {
+  "scene": "close_levels",
+  "method": "GMM K=4 transitive",
+  "groups": 3,
+  "true_regions": 4,
+  "label_accuracy": 0.839025,
+  "boundary_recall": 0.8711554447215295,
+  "boundary_precision": 0.9974182444061962
+ },
+ {
+  "scene": "close_levels",
+  "method": "GMM K=4",
+  "groups": 3,
+  "true_regions": 4,
+  "label_accuracy": 0.839025,
+  "boundary_recall": 0.8711554447215295,
+  "boundary_precision": 0.9974182444061962
+ },
+ {
+  "scene": "close_levels",
+  "method": "histogram minima",
+  "groups": 3,
+  "true_regions": 4,
+  "label_accuracy": 0.839525,
+  "boundary_recall": 0.8711554447215295,
+  "boundary_precision": 1.0
+ },
+ {
+  "scene": "close_levels",
+  "method": "existing detector",
+  "groups": null,
+  "true_regions": 4,
+  "label_accuracy": null,
+  "boundary_recall": 0.7597672485453034,
+  "boundary_precision": 1.0,
+  "detector": {
+   "status": "ok",
+   "points": 7,
+   "lines": 5,
+   "circles": 0,
+   "line_length_px": 894.9,
+   "resized_for_detection": false,
+   "processing_size": {
+    "width": 400,
+    "height": 300
+   },
+   "version": "2.0.0",
+   "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c"
+  }
+ },
+ {
+  "scene": "small_bright_spot",
+  "method": "GMM K=true",
+  "groups": 2,
+  "true_regions": 3,
+  "label_accuracy": 0.9941083333333334,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.9671132764920828
+ },
+ {
+  "scene": "small_bright_spot",
+  "method": "GMM K=4 transitive",
+  "groups": 2,
+  "true_regions": 3,
+  "label_accuracy": 0.9942333333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.9851116625310173
+ },
+ {
+  "scene": "small_bright_spot",
+  "method": "GMM K=4",
+  "groups": 2,
+  "true_regions": 3,
+  "label_accuracy": 0.9942333333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.9851116625310173
+ },
+ {
+  "scene": "small_bright_spot",
+  "method": "histogram minima",
+  "groups": 4,
+  "true_regions": 3,
+  "label_accuracy": 0.9989916666666666,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0
+ },
+ {
+  "scene": "small_bright_spot",
+  "method": "existing detector",
+  "groups": null,
+  "true_regions": 3,
+  "label_accuracy": null,
+  "boundary_recall": 0.8958068614993647,
+  "boundary_precision": 1.0,
+  "detector": {
+   "status": "ok",
+   "points": 4,
+   "lines": 4,
+   "circles": 0,
+   "line_length_px": 671.0,
+   "resized_for_detection": false,
+   "processing_size": {
+    "width": 400,
+    "height": 300
+   },
+   "version": "2.0.0",
+   "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c"
+  }
+ },
+ {
+  "scene": "blurred_edges",
+  "method": "GMM K=true",
+  "groups": 2,
+  "true_regions": 3,
+  "label_accuracy": 0.9358,
+  "boundary_recall": 0.8995633187772926,
+  "boundary_precision": 0.8111702127659575
+ },
+ {
+  "scene": "blurred_edges",
+  "method": "GMM K=4 transitive",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9818416666666666,
+  "boundary_recall": 0.9486899563318777,
+  "boundary_precision": 0.6392443631931749
+ },
+ {
+  "scene": "blurred_edges",
+  "method": "GMM K=4",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9818416666666666,
+  "boundary_recall": 0.9486899563318777,
+  "boundary_precision": 0.6392443631931749
+ },
+ {
+  "scene": "blurred_edges",
+  "method": "histogram minima",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9921416666666667,
+  "boundary_recall": 0.9956331877729258,
+  "boundary_precision": 0.9977046671767407
+ },
+ {
+  "scene": "blurred_edges",
+  "method": "existing detector",
+  "groups": null,
+  "true_regions": 3,
+  "label_accuracy": null,
+  "boundary_recall": 0.6648471615720524,
+  "boundary_precision": 1.0,
+  "detector": {
+   "status": "ok",
+   "points": 4,
+   "lines": 4,
+   "circles": 0,
+   "line_length_px": 537.0,
+   "resized_for_detection": false,
+   "processing_size": {
+    "width": 400,
+    "height": 300
+   },
+   "version": "2.0.0",
+   "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c"
+  }
+ },
+ {
+  "scene": "illumination_ramp",
+  "method": "GMM K=true",
+  "groups": 2,
+  "true_regions": 2,
+  "label_accuracy": 0.9975583333333333,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.7147971360381862
+ },
+ {
+  "scene": "illumination_ramp",
+  "method": "GMM K=4 transitive",
+  "groups": 4,
+  "true_regions": 2,
+  "label_accuracy": 0.9986333333333334,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.06666666666666667
+ },
+ {
+  "scene": "illumination_ramp",
+  "method": "GMM K=4",
+  "groups": 4,
+  "true_regions": 2,
+  "label_accuracy": 0.9986333333333334,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.06666666666666667
+ },
+ {
+  "scene": "illumination_ramp",
+  "method": "histogram minima",
+  "groups": 3,
+  "true_regions": 2,
+  "label_accuracy": 0.99885,
+  "boundary_recall": 1.0,
+  "boundary_precision": 0.14582986515731647
+ },
+ {
+  "scene": "illumination_ramp",
+  "method": "existing detector",
+  "groups": null,
+  "true_regions": 2,
+  "label_accuracy": null,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0,
+  "detector": {
+   "status": "ok",
+   "points": 4,
+   "lines": 4,
+   "circles": 0,
+   "line_length_px": 533.2,
+   "resized_for_detection": false,
+   "processing_size": {
+    "width": 400,
+    "height": 300
+   },
+   "version": "2.0.0",
+   "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c"
+  }
+ },
+ {
+  "scene": "noise_free",
+  "method": "GMM K=true",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.99585,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0
+ },
+ {
+  "scene": "noise_free",
+  "method": "GMM K=4 transitive",
+  "groups": 2,
+  "true_regions": 3,
+  "label_accuracy": 0.85205,
+  "boundary_recall": 0.3351528384279476,
+  "boundary_precision": 1.0
+ },
+ {
+  "scene": "noise_free",
+  "method": "GMM K=4",
+  "groups": 3,
+  "true_regions": 3,
+  "label_accuracy": 0.9955166666666667,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0
+ },
+ {
+  "scene": "noise_free",
+  "method": "histogram minima",
+  "groups": 6,
+  "true_regions": 3,
+  "label_accuracy": 0.99885,
+  "boundary_recall": 1.0,
+  "boundary_precision": 1.0
+ },
+ {
+  "scene": "noise_free",
+  "method": "existing detector",
+  "groups": null,
+  "true_regions": 3,
+  "label_accuracy": null,
+  "boundary_recall": 0.6648471615720524,
+  "boundary_precision": 1.0,
+  "detector": {
+   "status": "ok",
+   "points": 4,
+   "lines": 4,
+   "circles": 0,
+   "line_length_px": 530.5,
+   "resized_for_detection": false,
+   "processing_size": {
+    "width": 400,
+    "height": 300
+   },
+   "version": "2.0.0",
+   "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c"
+  }
+ }
+]

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geometry Intensity Lab</title>
+<style>
+  :root { --bg:#f6f6f4; --panel:#fff; --ink:#1d1d1b; --muted:#6b6b66; --line:#dcdcd6; --accent:#1f6feb; --warn:#b42318; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color:var(--ink); background:var(--bg); }
+  header { padding:10px 18px; border-bottom:1px solid var(--line); background:var(--panel); display:flex; gap:16px; align-items:baseline; }
+  header h1 { font-size:17px; margin:0; }
+  header span { color:var(--muted); font-size:12px; }
+  .wrap { display:grid; grid-template-columns: 330px 1fr; min-height: calc(100vh - 46px); }
+  aside { border-right:1px solid var(--line); background:var(--panel); padding:12px 14px; overflow:auto; max-height: calc(100vh - 46px); position:sticky; top:0; }
+  main { padding:14px 18px; overflow:auto; }
+  fieldset { border:1px solid var(--line); border-radius:6px; margin:0 0 10px; padding:8px 10px; }
+  legend { font-weight:600; font-size:12px; padding:0 4px; }
+  label { display:block; font-size:12px; margin:6px 0 2px; }
+  label small { color:var(--muted); display:block; font-size:11px; }
+  input[type=number], select, input[type=text] { width:100%; padding:4px 6px; font-size:13px; border:1px solid var(--line); border-radius:4px; background:#fff; }
+  input[type=checkbox] { margin-right:6px; }
+  button { padding:7px 12px; border-radius:5px; border:1px solid var(--accent); background:var(--accent); color:#fff; font-weight:600; cursor:pointer; }
+  button.secondary { background:#fff; color:var(--accent); }
+  button:disabled { opacity:.5; cursor:default; }
+  .row { display:flex; gap:8px; align-items:center; margin-top:8px; }
+  .tabs { display:flex; gap:4px; flex-wrap:wrap; border-bottom:1px solid var(--line); margin-bottom:12px; }
+  .tabs button { background:transparent; color:var(--ink); border:1px solid transparent; border-bottom:none; border-radius:6px 6px 0 0; font-weight:500; }
+  .tabs button.on { background:var(--panel); border-color:var(--line); font-weight:600; }
+  .tab { display:none; } .tab.on { display:block; }
+  .grid2 { display:grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap:14px; }
+  figure { margin:0 0 14px; background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:8px; }
+  figure img { width:100%; height:auto; display:block; image-rendering:auto; cursor:zoom-in; }
+  figcaption { font-size:12px; color:var(--muted); margin-bottom:6px; }
+  figcaption b { color:var(--ink); }
+  table { border-collapse:collapse; font-size:12px; margin:4px 0 14px; background:var(--panel); }
+  th, td { border:1px solid var(--line); padding:3px 7px; text-align:right; }
+  th { background:#efefea; } td.l, th.l { text-align:left; }
+  td.bad { background:#fde2e1; } td.ok { background:#e3f4e1; }
+  .sw { display:inline-block; width:11px; height:11px; border-radius:2px; vertical-align:-1px; margin-right:4px; border:1px solid #0003; }
+  .note { font-size:12px; color:var(--muted); max-width:980px; }
+  .status { font-size:12px; margin-top:8px; color:var(--muted); white-space:pre-wrap; }
+  .status.err { color:var(--warn); }
+  .legend span { margin-right:14px; font-size:12px; }
+  h3 { font-size:14px; margin:14px 0 6px; }
+</style>
+</head>
+<body>
+<header><h1>Geometry Intensity Lab</h1><span>Histogram grouping · intensity region masks · region boundaries vs the existing detector</span></header>
+<div class="wrap">
+<aside>
+  <fieldset><legend>Image</legend>
+    <label>Dataset<select id="dataset"></select></label>
+    <label>Camera folder<select id="view"></select></label>
+    <label>Image<select id="image"></select></label>
+  </fieldset>
+  <div id="form"></div>
+  <div class="row"><button id="run">Run experiment</button><button id="reset" class="secondary">Defaults</button></div>
+  <fieldset style="margin-top:10px"><legend>Save / reproduce</legend>
+    <label>Label for the saved folder (optional)<input type="text" id="label" placeholder="e.g. k5-depth03"></label>
+    <div class="row"><button id="save" class="secondary" disabled>Save settings and outputs</button></div>
+    <label>Load settings from a saved run<select id="saved"><option value="">—</option></select></label>
+  </fieldset>
+  <div id="status" class="status">Choose an image and press “Run experiment”.</div>
+</aside>
+<main>
+  <div class="tabs" id="tabs"></div>
+  <section class="tab on" data-tab="Image and histogram" id="t-hist"></section>
+  <section class="tab" data-tab="GMM components" id="t-gmm"></section>
+  <section class="tab" data-tab="Histogram-minimum intervals" id="t-min"></section>
+  <section class="tab" data-tab="Region masks" id="t-mask"></section>
+  <section class="tab" data-tab="Boundaries vs detector" id="t-bnd"></section>
+</main>
+</div>
+<script>
+const FIELDS = [
+  ["Preprocessing", [
+    ["presmooth_sigma_px", "Spatial pre-smoothing σ (pixels)", "0 = off. Gaussian blur of the image before the histogram; result rounded to 0–255.", 0.5],
+  ]],
+  ["Histogram smoothing", [
+    ["hist_smooth_sigma", "Histogram smoothing σ (gray levels)", "Used by the minima method. Drawn as a separate line; the raw histogram is never replaced.", 0.5],
+    ["histogram_log_scale", "Log-scale histogram plots", "Display only.", "bool"],
+  ]],
+  ["GMM", [
+    ["gmm_k", "Number of components K", "", 1],
+    ["gmm_sweep_max_k", "Compare K = 1 … this value", "BIC/AIC and small multiples.", 1],
+    ["gmm_min_sigma", "Minimum component σ (gray levels)", "Variance floor; stops a clipped spike (e.g. 255) collapsing.", 0.5],
+    ["separation_threshold", "Separation threshold (Ashman's D)", "Components with D below this are merged into one group.", 0.1],
+    ["merge_rule", "Overlap handling", "Hierarchical: merge the least-separated pair, recompute, repeat. Transitive: any linked pair joins a group (can chain).", ["hierarchical", "transitive"]],
+    ["min_posterior", "Minimum posterior", "0 = off. Gray values whose best group posterior is lower are marked “uncertain”.", 0.05],
+    ["gmm_n_init", "EM starts", "Start 1: quantiles; others: seeded random.", 1],
+    ["gmm_seed", "Random seed", "", 1],
+  ]],
+  ["Histogram minima", [
+    ["minima_min_relative_depth", "Minimum relative valley depth", "1 − valley / lower neighbouring peak, on the smoothed histogram.", 0.05],
+    ["minima_min_interval_fraction", "Minimum interval size (fraction of pixels)", "Smaller intervals are merged into a neighbour.", 0.0005],
+  ]],
+  ["Masks and boundaries", [
+    ["min_region_area_px", "Minimum region area (pixels)", "0 = off. Smaller connected regions take the label of the nearest larger region.", 1],
+    ["compare_tolerance_px", "Comparison tolerance (pixels)", "A boundary within this distance of a detector edge counts as matched.", 0.5],
+    ["run_detector", "Run the existing detector", "geometry-detect CLI, commit 4ca9cf5, default pipeline.", "bool"],
+  ]],
+];
+let CFG = null, LAST = null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const PALETTE = [[31,119,180],[255,127,14],[44,160,44],[214,39,40],[148,103,189],[140,86,75],[227,119,194],[23,190,207],[188,189,34],[127,127,127],[174,199,232],[255,187,120]];
+const sw = g => g < 0 ? `<span class="sw" style="background:rgb(40,40,40)"></span>uncertain` : `<span class="sw" style="background:rgb(${PALETTE[g % 12]})"></span>G${g+1}`;
+const f = (x, d=1) => x == null ? "—" : Number(x).toFixed(d);
+const pct = x => x == null ? "—" : (100*x).toFixed(1) + " %";
+
+function buildForm() {
+  let h = "";
+  for (const [title, items] of FIELDS) {
+    h += `<fieldset><legend>${title}</legend>`;
+    for (const [k, lab, help, step] of items) {
+      if (step === "bool") h += `<label><input type="checkbox" id="s_${k}">${lab}${help ? `<small>${help}</small>` : ""}</label>`;
+      else if (Array.isArray(step)) h += `<label>${lab}<small>${help}</small><select id="s_${k}">${step.map(o => `<option>${o}</option>`).join("")}</select></label>`;
+      else h += `<label>${lab}${help ? `<small>${help}</small>` : ""}<input type="number" id="s_${k}" step="${step}"></label>`;
+    }
+    h += `</fieldset>`;
+  }
+  $("form").innerHTML = h;
+}
+function setSettings(s) {
+  for (const [, items] of FIELDS) for (const [k,, , step] of items) {
+    const el = $("s_" + k); if (!(k in s)) continue;
+    if (step === "bool") el.checked = !!s[k]; else el.value = s[k];
+  }
+  if (s.dataset && CFG.datasets[s.dataset] && s.image) {
+    $("dataset").value = s.dataset; fillViews();
+    const v = s.image.split("/")[0]; $("view").value = v; fillImages(); $("image").value = s.image;
+  }
+}
+function getSettings() {
+  const s = {...CFG.defaults, dataset: $("dataset").value, image: $("image").value};
+  for (const [, items] of FIELDS) for (const [k,, , step] of items) {
+    const el = $("s_" + k);
+    s[k] = step === "bool" ? el.checked : Array.isArray(step) ? el.value : (Number.isInteger(CFG.defaults[k]) ? parseInt(el.value) : parseFloat(el.value));
+  }
+  return s;
+}
+function fillViews() {
+  const imgs = CFG.datasets[$("dataset").value];
+  const views = [...new Set(imgs.map(i => i.view))];
+  $("view").innerHTML = views.map(v => `<option>${v}</option>`).join("");
+  fillImages();
+}
+function fillImages() {
+  const imgs = CFG.datasets[$("dataset").value].filter(i => i.view === $("view").value);
+  $("image").innerHTML = imgs.map(i => `<option value="${esc(i.relpath)}">${esc(i.relpath.split("/").slice(1).join(" / "))}</option>`).join("");
+}
+function fillSaved(list) { $("saved").innerHTML = `<option value="">—</option>` + list.map(n => `<option>${esc(n)}</option>`).join(""); }
+
+function tabs() {
+  const secs = [...document.querySelectorAll(".tab")];
+  $("tabs").innerHTML = secs.map((s, i) => `<button data-i="${i}" class="${i===0?"on":""}">${i+1} · ${s.dataset.tab}</button>`).join("");
+  $("tabs").onclick = e => { const i = e.target.dataset.i; if (i == null) return;
+    secs.forEach((s, j) => s.classList.toggle("on", j == i));
+    [...$("tabs").children].forEach((b, j) => b.classList.toggle("on", j == i)); };
+}
+const img = (name, cap) => `<figure><figcaption>${cap}</figcaption><a href="/api/image/${LAST.run_id}/${name}.png" target="_blank"><img src="/api/image/${LAST.run_id}/${name}.png" alt="${esc(cap.replace(/<[^>]+>/g, ""))}"></a></figure>`;
+
+function statsTable(m) {
+  return `<table><tr><th class="l">group</th><th>pixels</th><th>share</th><th>gray min–max</th><th>mean ± sd</th><th>connected regions</th><th>regions &lt; 50 px</th><th>largest region (px)</th></tr>` +
+    m.group_stats.map(g => `<tr><td class="l">${sw(g.group)}</td><td>${g.pixels}</td><td>${pct(g.share)}</td><td>${g.gray_min}–${g.gray_max}</td><td>${f(g.gray_mean)} ± ${f(g.gray_std)}</td><td>${g.connected_regions}</td><td>${g.regions_under_50px}</td><td>${g.largest_region_px}</td></tr>`).join("") + `</table>`;
+}
+function render(r) {
+  const S = r.summary, G = S.gmm, M = S.minima, im = S.image, H = S.histogram;
+  $("t-hist").innerHTML = `<p class="note"><b>${esc(im.path)}</b><br>${im.width} × ${im.height} px · file mode ${im.source_mode} · ${esc(im.gray_conversion)} · sha256 ${im.sha256.slice(0,16)}…<br>
+    Gray range ${H.min}–${H.max}; pixels at 0: ${H.count_at_0}, at 255: ${H.count_at_255} (possible clipping); empty bins inside the range: ${H.empty_bins_inside_range}.
+    Histogram smoothing: ${esc(H.smoothing)} (black line; gray bars are the raw counts).</p>
+    ${img("original", "<b>Original</b> (grayscale used for all processing)")}
+    <div class="grid2">${img("histogram_gmm", "<b>Histogram with GMM components</b>")}${img("histogram_minima", "<b>Histogram with local-minimum intervals</b>")}</div>`;
+
+  const sep = G.separation_ashman_d, th = G.threshold, fit = G.fit;
+  const cg = {}; G.groups.forEach((g, gi) => g.forEach(c => cg[c] = gi));
+  let sepT = `<table><tr><th>D</th>${fit.means.map((_, j) => `<th>C${j+1}</th>`).join("")}</tr>` +
+    sep.map((row, i) => `<tr><th>C${i+1}</th>${row.map((v, j) => i===j ? "<td>—</td>" : `<td class="${v < th ? "bad" : "ok"}">${f(v,2)}</td>`).join("")}</tr>`).join("") + `</table>`;
+  $("t-gmm").innerHTML = `<p class="note">Gaussian mixture fitted by EM to the raw histogram (all pixels), K = ${fit.k}, log-likelihood ${f(fit.log_likelihood,0)}, ${fit.converged ? "converged" : "<b>not converged</b>"} after ${fit.n_iter} iterations.
+    Separation: Ashman's D = |μ₁−μ₂| / √((σ₁²+σ₂²)/2). Pairs with D &lt; ${th} are shown in red. Overlap handling: <b>${G.merge_rule}</b> — ${G.merge_rule === "hierarchical" ? "the least-separated pair of groups is merged and replaced by its moment-matched Gaussian, repeated until every pair has D ≥ " + th : "every linked pair joins one group (a broad component can chain separated levels)"}.
+    Each gray value goes to the group with the highest summed posterior, so a group can own non-contiguous gray ranges. A component is a shape in the gray-value distribution, not an object.</p>
+    ${img("histogram_gmm", "<b>Fitted components</b> (coloured by the group they end up in; band below = group of each gray value)")}
+    <div class="grid2"><div><h3>Components</h3><table><tr><th class="l">component</th><th>mean</th><th>σ</th><th>weight</th><th class="l">group</th></tr>` +
+    fit.means.map((m, j) => `<tr><td class="l">C${j+1}</td><td>${f(m,2)}</td><td>${f(fit.sigmas[j],2)}</td><td>${f(fit.weights[j],4)}</td><td class="l">${sw(cg[j])}</td></tr>`).join("") +
+    `</table><h3>Separation matrix (Ashman's D)</h3>${sepT}<h3>Groups (moment-matched)</h3><table><tr><th class="l">group</th><th class="l">components</th><th>mean</th><th>σ</th><th>weight</th></tr>${G.groups.map((g, i) => `<tr><td class="l">${sw(i)}</td><td class="l">${g.map(c => "C" + (c+1)).join(", ")}</td><td>${f(G.group_gaussians[i].mean,1)}</td><td>${f(G.group_gaussians[i].sigma,1)}</td><td>${f(G.group_gaussians[i].weight,4)}</td></tr>`).join("")}</table><h3>Gray ranges per group</h3><table><tr><th class="l">group</th><th>from</th><th>to</th></tr>` +
+    G.gray_ranges.map(x => `<tr><td class="l">${sw(x.group)}</td><td>${x.lo}</td><td>${x.hi}</td></tr>`).join("") + `</table></div>
+    <div>${img("gmm_k_sweep", "<b>BIC / AIC vs K</b> — with hundreds of thousands of pixels these keep falling; use as a hint only")}
+    <table><tr><th>K</th><th>BIC</th><th>groups at D ≥ ${th}</th><th>converged</th></tr>${G.sweep.map(x => `<tr><td>${x.k}</td><td>${f(x.bic,0)}</td><td>${x.groups_at_threshold}</td><td>${x.converged ? "yes" : "no"}</td></tr>`).join("")}</table></div></div>
+    ${img("gmm_k_grid", "<b>Fits for different K</b>")}`;
+
+  $("t-min").innerHTML = `<p class="note">Local minima of the smoothed histogram (σ = ${r.settings.hist_smooth_sigma} gray levels); a plateau counts once at its centre.
+    Minima are removed shallowest first while their relative depth is below ${M.params.min_relative_depth}, then intervals holding less than ${pct(M.params.min_interval_fraction)} of the pixels are merged. A gray value equal to a threshold belongs to the lower interval.</p>
+    ${img("histogram_minima", "<b>Smoothed histogram, minima and intervals</b>")}
+    <div class="grid2"><div><h3>Intervals</h3><table><tr><th class="l">interval</th><th>from</th><th>to</th><th>pixels</th></tr>` +
+    M.intervals.map((iv, i) => `<tr><td class="l">${sw(i)}</td><td>${iv[0]}</td><td>${iv[1]}</td><td>${M.interval_pixels[i]}</td></tr>`).join("") +
+    `</table></div><div><h3>All candidate minima: ${M.candidates.length}; kept: ${M.kept.length}</h3><table><tr><th>position</th><th class="l">removed because</th></tr>` +
+    (M.removed.length ? M.removed.map(x => `<tr><td>${f(x.position,1)}</td><td class="l">${esc(x.reason)}</td></tr>`).join("") : `<tr><td colspan=2>none removed</td></tr>`) + `</table></div></div>`;
+
+  const mg = S.methods.gmm, mm = S.methods.minima;
+  $("t-mask").innerHTML = `<p class="note">Each pixel coloured by the group of its gray value. Colours are categorical (ordered by intensity) and carry no physical meaning; one group is usually many disconnected regions.
+    ${r.settings.min_region_area_px > 0 ? `Regions smaller than ${r.settings.min_region_area_px} px were re-labelled (GMM: ${mg.regions_removed_by_cleanup}, minima: ${mm.regions_removed_by_cleanup}).` : "No small-region cleanup."}</p>
+    <div class="grid2"><div>${img("mask_gmm", `<b>GMM groups</b> (${mg.groups})`)}${statsTable(mg)}</div><div>${img("mask_minima", `<b>Histogram-minimum intervals</b> (${mm.groups})`)}${statsTable(mm)}</div></div>`;
+
+  const vd = m => m.vs_detector;
+  const cmpRow = (name, m) => `<tr><td class="l">${name}</td><td>${m.boundary_px}</td><td>${pct(m.boundary_share_of_image)}</td><td>${f(m.boundary_step_median,0)} / ${f(m.boundary_step_p90,0)}</td>` +
+     (vd(m) ? `<td>${pct(vd(m).reference_matched)}</td><td>${pct(vd(m).candidate_matched)}</td><td>${vd(m).reference_only_px}</td><td>${vd(m).candidate_only_px}</td>` : `<td colspan=4>no detector result</td>`) + `</tr>`;
+  const D = S.detector;
+  $("t-bnd").innerHTML = `<p class="note">A boundary pixel is a pixel whose right or lower neighbour has a different label. The detector (existing AIxAM geometry-detect, commit ${D ? D.commit.slice(0,7) : "—"}) reports straight lines and verified circles only, after filtering texture and soft edges, so the two outputs differ in kind: neither is ground truth.
+    ${S.detector_error ? `<b style="color:var(--warn)">Detector error: ${esc(S.detector_error)}</b>` : D ? `Detector: ${D.lines} line(s), ${D.circles} circle(s), ${D.points} point(s)${D.resized_for_detection ? `, detection on a downscaled ${D.processing_size.width}×${D.processing_size.height} copy` : ""}.` : "Detector not run."}</p>
+    <table><tr><th class="l">method</th><th>boundary px</th><th>share of image</th><th>gray step across boundary (median / p90)</th><th>detector edge matched</th><th>boundary near a detector edge</th><th>detector-only px</th><th>regions-only px</th></tr>
+    ${cmpRow("GMM", mg)}${cmpRow("Histogram minima", mm)}</table>
+    <p class="legend"><span><span class="sw" style="background:rgb(60,220,60)"></span>matched (within ${r.settings.compare_tolerance_px} px)</span><span><span class="sw" style="background:rgb(0,200,255)"></span>detector only — missing from the region wireframe</span><span><span class="sw" style="background:rgb(255,60,200)"></span>regions only — not reported by the detector (inspect: real edge, texture, noise or gradient?)</span></p>
+    <div class="grid2">${img("boundaries_gmm", "<b>Region boundaries — GMM groups</b>")}${img("boundaries_minima", "<b>Region boundaries — histogram-minimum intervals</b>")}</div>
+    ${D ? `<div class="grid2">${img("compare_gmm", "<b>GMM boundaries vs detector</b>")}${img("compare_minima", "<b>Minima boundaries vs detector</b>")}</div>${img("detector", "<b>Existing detector edges</b> (lines and circles, rasterised)")}` : ""}
+    <p class="note">GMM vs minima boundaries: ${pct(S.gmm_vs_minima_boundaries.reference_matched)} of GMM boundary pixels lie within ${r.settings.compare_tolerance_px} px of a minima boundary; ${pct(S.gmm_vs_minima_boundaries.candidate_matched)} the other way. Timings (ms): ${esc(JSON.stringify(S.timings_ms))}.</p>`;
+}
+
+async function run() {
+  $("run").disabled = true; $("save").disabled = true;
+  $("status").className = "status"; $("status").textContent = "Running… (large Isaac Sim images take a few seconds)";
+  const t = performance.now();
+  try {
+    const res = await fetch("/api/run", {method: "POST", body: JSON.stringify({settings: getSettings()})});
+    const r = await res.json();
+    if (!res.ok) throw new Error(r.error);
+    LAST = r; render(r); $("save").disabled = false;
+    $("status").textContent = `Done in ${((performance.now()-t)/1000).toFixed(1)} s.`;
+  } catch (e) { $("status").className = "status err"; $("status").textContent = "Error: " + e.message; }
+  $("run").disabled = false;
+}
+async function save() {
+  const res = await fetch("/api/save", {method: "POST", body: JSON.stringify({run_id: LAST.run_id, label: $("label").value})});
+  const r = await res.json();
+  if (!res.ok) { $("status").className = "status err"; $("status").textContent = "Error: " + r.error; return; }
+  fillSaved(r.saved); $("status").className = "status"; $("status").textContent = "Saved to\n" + r.saved_to;
+}
+async function init() {
+  CFG = await (await fetch("/api/config")).json();
+  buildForm(); tabs();
+  $("dataset").innerHTML = Object.keys(CFG.datasets).map(d => `<option>${d}</option>`).join("");
+  fillViews(); setSettings(CFG.defaults); fillSaved(CFG.saved);
+  if (!CFG.detector_available) { $("s_run_detector").checked = false; $("status").textContent = "Detector CLI not built (scripts/build_detector.sh). Comparison disabled."; }
+  $("dataset").onchange = fillViews; $("view").onchange = fillImages;
+  $("run").onclick = run; $("save").onclick = save;
+  $("reset").onclick = () => { const d = $("dataset").value, i = $("image").value, v = $("view").value; setSettings(CFG.defaults); $("dataset").value = d; fillViews(); $("view").value = v; fillImages(); $("image").value = i; };
+  $("saved").onchange = async () => { if (!$("saved").value) return;
+    const s = await (await fetch(`/api/saved/${encodeURIComponent($("saved").value)}/settings`)).json();
+    setSettings(s.settings); $("status").textContent = `Loaded settings of ${$("saved").value}. Press “Run experiment” to reproduce.`; };
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Tested with miniconda Python 3.12 and these versions (PyPI was unreachable, so the venv reuses the base packages).
+numpy==2.3.5
+scipy==1.17.0
+matplotlib==3.10.8
+pillow==12.2.0
+pytest==9.0.2
+# optional, only for one cross-check test (skipped when missing)
+scikit-learn==1.9.0

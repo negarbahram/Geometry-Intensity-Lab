@@ -1,0 +1,32 @@
+{
+  "settings": {
+    "dataset": "isaacsim-images",
+    "image": "front/isaacsim-samples/rgb_0137.png",
+    "presmooth_sigma_px": 0.0,
+    "hist_smooth_sigma": 2.0,
+    "gmm_k": 4,
+    "gmm_min_sigma": 1.0,
+    "gmm_n_init": 5,
+    "gmm_seed": 0,
+    "gmm_sweep_max_k": 8,
+    "separation_threshold": 2.0,
+    "merge_rule": "hierarchical",
+    "min_posterior": 0.0,
+    "minima_min_relative_depth": 0.2,
+    "minima_min_interval_fraction": 0.001,
+    "min_region_area_px": 0,
+    "run_detector": true,
+    "compare_tolerance_px": 3.0,
+    "histogram_log_scale": true
+  },
+  "software": {
+    "lab_commit": null,
+    "python": "3.12.2",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "detector_commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c",
+    "detector_cli": "/Users/apple/Downloads/Geometry-Intensity-Lab/third_party/geometry-detect-build/geometry-detect-cli"
+  },
+  "image_sha256": "f6dd4812a08aeb3620263d811b1be8b748f94f4ad752a2f7118cd802911b933a",
+  "reproduce": "python -m intensity_lab run --settings /Users/apple/Downloads/Geometry-Intensity-Lab/examples/isaacsim-images/front_rgb_0137/default/settings.json --out <new dir>"
+}

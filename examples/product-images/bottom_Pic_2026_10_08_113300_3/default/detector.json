@@ -1,0 +1,1006 @@
+{
+ "schema": "aixam.geometry.detection.v1",
+ "status": "ok",
+ "image": {
+  "sha256": "bf7c958011f9fa682384b37f715be418c07d1ef7c3256a1d3959794b4badf0e8",
+  "media_type": "image/png",
+  "width": 1000,
+  "height": 550,
+  "bytes": 249122
+ },
+ "coordinate_convention": "Source pixels of the decoded image: origin at the outer top-left corner of the first pixel, x grows right, y grows down. Identical to the grid the application shows and measures on.",
+ "transforms": {
+  "orientation": "EXIF orientation applied by the decoder, as a browser displays the file",
+  "processing_scale_x": 1,
+  "processing_scale_y": 1,
+  "resized_for_detection": false,
+  "processing_size": {
+   "width": 1000,
+   "height": 550
+  },
+  "cropped": false,
+  "valid_region": {
+   "x": 0,
+   "y": 0,
+   "w": 1000,
+   "h": 550
+  },
+  "note": "Detection may run on a downscaled copy of large images. Every coordinate in this result is already mapped back to the full-resolution source grid. Nothing is cropped; pixels in screenshot borders or padding (valid_region excludes them) are not searched."
+ },
+ "detector": {
+  "name": "opencv-geometry-detect",
+  "version": "2.0.0",
+  "library": "opencv 4.11.0",
+  "pipeline_version": "2.0.0",
+  "role": "preliminary detection assistance",
+  "derived": {
+   "canny_thresholds": {
+    "low": 13.88,
+    "high": 27.75
+   }
+  }
+ },
+ "disclaimer": "Preliminary detection assistance for choosing points. Not validated dimensional inspection: no calibration, no confidence, and not an AIxAM measurement or verdict.",
+ "points": [
+  {
+   "id": "p001",
+   "type": "line_end",
+   "x": 44.51,
+   "y": 0.52,
+   "priority": "primary",
+   "rank": 0.713,
+   "edge_ids": [
+    "e008"
+   ]
+  },
+  {
+   "id": "p002",
+   "type": "line_end",
+   "x": 102.09,
+   "y": 0.56,
+   "priority": "primary",
+   "rank": 0.777,
+   "edge_ids": [
+    "e007"
+   ]
+  },
+  {
+   "id": "p003",
+   "type": "line_end",
+   "x": 383.08,
+   "y": 0.62,
+   "priority": "secondary",
+   "rank": 0.581,
+   "edge_ids": [
+    "e014"
+   ]
+  },
+  {
+   "id": "p004",
+   "type": "line_end",
+   "x": 409.68,
+   "y": 0.56,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e001"
+   ]
+  },
+  {
+   "id": "p005",
+   "type": "line_end",
+   "x": 709.71,
+   "y": 0.6,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e002"
+   ]
+  },
+  {
+   "id": "p006",
+   "type": "line_end",
+   "x": 978.64,
+   "y": 0.53,
+   "priority": "secondary",
+   "rank": 0.577,
+   "edge_ids": [
+    "e016"
+   ]
+  },
+  {
+   "id": "p007",
+   "type": "line_end",
+   "x": 330.24,
+   "y": 54.43,
+   "priority": "secondary",
+   "rank": 0.556,
+   "edge_ids": [
+    "e021"
+   ]
+  },
+  {
+   "id": "p008",
+   "type": "line_end",
+   "x": 331.97,
+   "y": 99.41,
+   "priority": "secondary",
+   "rank": 0.556,
+   "edge_ids": [
+    "e021"
+   ]
+  },
+  {
+   "id": "p009",
+   "type": "line_end",
+   "x": 382.48,
+   "y": 65.63,
+   "priority": "secondary",
+   "rank": 0.581,
+   "edge_ids": [
+    "e014"
+   ]
+  },
+  {
+   "id": "p010",
+   "type": "line_end",
+   "x": 521.2,
+   "y": 90.72,
+   "priority": "secondary",
+   "rank": 0.563,
+   "edge_ids": [
+    "e019"
+   ]
+  },
+  {
+   "id": "p011",
+   "type": "line_end",
+   "x": 858.13,
+   "y": 65.41,
+   "priority": "secondary",
+   "rank": 0.641,
+   "edge_ids": [
+    "e010"
+   ]
+  },
+  {
+   "id": "p012",
+   "type": "intersection",
+   "x": 977.29,
+   "y": 65.58,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e016"
+   ]
+  },
+  {
+   "id": "p013",
+   "type": "line_end",
+   "x": 498,
+   "y": 109.35,
+   "priority": "secondary",
+   "rank": 0.597,
+   "edge_ids": [
+    "e011"
+   ]
+  },
+  {
+   "id": "p014",
+   "type": "line_end",
+   "x": 41.27,
+   "y": 170.66,
+   "priority": "primary",
+   "rank": 0.713,
+   "edge_ids": [
+    "e008"
+   ]
+  },
+  {
+   "id": "p015",
+   "type": "line_end",
+   "x": 527.63,
+   "y": 140.6,
+   "priority": "secondary",
+   "rank": 0.563,
+   "edge_ids": [
+    "e019"
+   ]
+  },
+  {
+   "id": "p016",
+   "type": "line_end",
+   "x": 498.94,
+   "y": 186.83,
+   "priority": "secondary",
+   "rank": 0.597,
+   "edge_ids": [
+    "e011"
+   ]
+  },
+  {
+   "id": "p017",
+   "type": "line_end",
+   "x": 694.71,
+   "y": 187.82,
+   "priority": "secondary",
+   "rank": 0.668,
+   "edge_ids": [
+    "e009"
+   ]
+  },
+  {
+   "id": "p018",
+   "type": "line_end",
+   "x": 977.07,
+   "y": 204.29,
+   "priority": "primary",
+   "rank": 0.816,
+   "edge_ids": [
+    "e005"
+   ]
+  },
+  {
+   "id": "p019",
+   "type": "line_end",
+   "x": 102.68,
+   "y": 221.84,
+   "priority": "primary",
+   "rank": 0.839,
+   "edge_ids": [
+    "e004",
+    "e007"
+   ]
+  },
+  {
+   "id": "p020",
+   "type": "line_end",
+   "x": 330.62,
+   "y": 243.11,
+   "priority": "primary",
+   "rank": 0.881,
+   "edge_ids": [
+    "e003"
+   ]
+  },
+  {
+   "id": "p021",
+   "type": "intersection",
+   "x": 330.92,
+   "y": 261.45,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e003",
+    "e020"
+   ]
+  },
+  {
+   "id": "p022",
+   "type": "intersection",
+   "x": 384.87,
+   "y": 261.62,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e020"
+   ]
+  },
+  {
+   "id": "p023",
+   "type": "line_end",
+   "x": 384.85,
+   "y": 276.87,
+   "priority": "secondary",
+   "rank": 0.581,
+   "edge_ids": [
+    "e015"
+   ]
+  },
+  {
+   "id": "p024",
+   "type": "intersection",
+   "x": 332.18,
+   "y": 340.01,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e003"
+   ]
+  },
+  {
+   "id": "p025",
+   "type": "line_end",
+   "x": 704.4,
+   "y": 321.92,
+   "priority": "secondary",
+   "rank": 0.668,
+   "edge_ids": [
+    "e009"
+   ]
+  },
+  {
+   "id": "p026",
+   "type": "intersection",
+   "x": 384.74,
+   "y": 340.67,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e015",
+    "e023"
+   ]
+  },
+  {
+   "id": "p027",
+   "type": "line_end",
+   "x": 733.12,
+   "y": 361.22,
+   "priority": "secondary",
+   "rank": 0.798,
+   "edge_ids": [
+    "e006"
+   ]
+  },
+  {
+   "id": "p028",
+   "type": "intersection",
+   "x": 978.29,
+   "y": 358.83,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e005"
+   ]
+  },
+  {
+   "id": "p029",
+   "type": "line_end",
+   "x": 430.21,
+   "y": 380.6,
+   "priority": "secondary",
+   "rank": 0.594,
+   "edge_ids": [
+    "e012"
+   ]
+  },
+  {
+   "id": "p030",
+   "type": "line_end",
+   "x": 634.8,
+   "y": 419.39,
+   "priority": "secondary",
+   "rank": 0.55,
+   "edge_ids": [
+    "e024"
+   ]
+  },
+  {
+   "id": "p031",
+   "type": "line_end",
+   "x": 430.41,
+   "y": 455.65,
+   "priority": "secondary",
+   "rank": 0.594,
+   "edge_ids": [
+    "e012"
+   ]
+  },
+  {
+   "id": "p032",
+   "type": "line_end",
+   "x": 633.49,
+   "y": 459.38,
+   "priority": "secondary",
+   "rank": 0.55,
+   "edge_ids": [
+    "e024"
+   ]
+  },
+  {
+   "id": "p033",
+   "type": "line_end",
+   "x": 979.07,
+   "y": 456.87,
+   "priority": "primary",
+   "rank": 0.816,
+   "edge_ids": [
+    "e005"
+   ]
+  },
+  {
+   "id": "p034",
+   "type": "line_end",
+   "x": 96.08,
+   "y": 493.13,
+   "priority": "primary",
+   "rank": 0.839,
+   "edge_ids": [
+    "e004",
+    "e018"
+   ]
+  },
+  {
+   "id": "p035",
+   "type": "line_end",
+   "x": 482.33,
+   "y": 488.08,
+   "priority": "secondary",
+   "rank": 0.575,
+   "edge_ids": [
+    "e017"
+   ]
+  },
+  {
+   "id": "p036",
+   "type": "line_end",
+   "x": 979.88,
+   "y": 474.31,
+   "priority": "secondary",
+   "rank": 0.592,
+   "edge_ids": [
+    "e013"
+   ]
+  },
+  {
+   "id": "p037",
+   "type": "intersection",
+   "x": 335.29,
+   "y": 534.12,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e003",
+    "e022"
+   ]
+  },
+  {
+   "id": "p038",
+   "type": "line_end",
+   "x": 379.36,
+   "y": 535.06,
+   "priority": "secondary",
+   "rank": 0.556,
+   "edge_ids": [
+    "e022"
+   ]
+  },
+  {
+   "id": "p039",
+   "type": "line_end",
+   "x": 100.42,
+   "y": 548.18,
+   "priority": "secondary",
+   "rank": 0.569,
+   "edge_ids": [
+    "e018"
+   ]
+  },
+  {
+   "id": "p040",
+   "type": "line_end",
+   "x": 335.51,
+   "y": 548.07,
+   "priority": "primary",
+   "rank": 0.881,
+   "edge_ids": [
+    "e003"
+   ]
+  },
+  {
+   "id": "p041",
+   "type": "line_end",
+   "x": 410.41,
+   "y": 548.14,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e001"
+   ]
+  },
+  {
+   "id": "p042",
+   "type": "line_end",
+   "x": 487.28,
+   "y": 548.18,
+   "priority": "secondary",
+   "rank": 0.575,
+   "edge_ids": [
+    "e017"
+   ]
+  },
+  {
+   "id": "p043",
+   "type": "line_end",
+   "x": 710.98,
+   "y": 548.14,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e002"
+   ]
+  },
+  {
+   "id": "p044",
+   "type": "line_end",
+   "x": 978.4,
+   "y": 548.21,
+   "priority": "secondary",
+   "rank": 0.592,
+   "edge_ids": [
+    "e013"
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "e001",
+   "type": "line",
+   "polyline": [
+    [
+     409.68,
+     0.56
+    ],
+    [
+     410.41,
+     548.14
+    ]
+   ],
+   "length_px": 547.6,
+   "point_ids": [
+    "p004",
+    "p041"
+   ]
+  },
+  {
+   "id": "e002",
+   "type": "line",
+   "polyline": [
+    [
+     710.98,
+     548.14
+    ],
+    [
+     709.71,
+     0.6
+    ]
+   ],
+   "length_px": 547.5,
+   "point_ids": [
+    "p005",
+    "p043"
+   ]
+  },
+  {
+   "id": "e003",
+   "type": "line",
+   "polyline": [
+    [
+     330.62,
+     243.11
+    ],
+    [
+     335.51,
+     548.07
+    ]
+   ],
+   "length_px": 305,
+   "point_ids": [
+    "p020",
+    "p021",
+    "p024",
+    "p037",
+    "p040"
+   ]
+  },
+  {
+   "id": "e004",
+   "type": "line",
+   "polyline": [
+    [
+     102.68,
+     221.84
+    ],
+    [
+     96.08,
+     493.13
+    ]
+   ],
+   "length_px": 271.4,
+   "point_ids": [
+    "p019",
+    "p034"
+   ]
+  },
+  {
+   "id": "e005",
+   "type": "line",
+   "polyline": [
+    [
+     977.07,
+     204.29
+    ],
+    [
+     979.07,
+     456.87
+    ]
+   ],
+   "length_px": 252.6,
+   "point_ids": [
+    "p018",
+    "p028",
+    "p033"
+   ]
+  },
+  {
+   "id": "e006",
+   "type": "line",
+   "polyline": [
+    [
+     733.12,
+     361.22
+    ],
+    [
+     971.85,
+     358.89
+    ]
+   ],
+   "length_px": 238.7,
+   "point_ids": [
+    "p027"
+   ]
+  },
+  {
+   "id": "e007",
+   "type": "line",
+   "polyline": [
+    [
+     102.09,
+     0.56
+    ],
+    [
+     104.14,
+     221.85
+    ]
+   ],
+   "length_px": 221.3,
+   "point_ids": [
+    "p002",
+    "p019"
+   ]
+  },
+  {
+   "id": "e008",
+   "type": "line",
+   "polyline": [
+    [
+     44.51,
+     0.52
+    ],
+    [
+     41.27,
+     170.66
+    ]
+   ],
+   "length_px": 170.2,
+   "point_ids": [
+    "p001",
+    "p014"
+   ]
+  },
+  {
+   "id": "e009",
+   "type": "line",
+   "polyline": [
+    [
+     704.4,
+     321.92
+    ],
+    [
+     694.71,
+     187.82
+    ]
+   ],
+   "length_px": 134.4,
+   "point_ids": [
+    "p017",
+    "p025"
+   ]
+  },
+  {
+   "id": "e010",
+   "type": "line",
+   "polyline": [
+    [
+     858.13,
+     65.41
+    ],
+    [
+     970.62,
+     65.57
+    ]
+   ],
+   "length_px": 112.5,
+   "point_ids": [
+    "p011"
+   ]
+  },
+  {
+   "id": "e011",
+   "type": "line",
+   "polyline": [
+    [
+     498,
+     109.35
+    ],
+    [
+     498.94,
+     186.83
+    ]
+   ],
+   "length_px": 77.5,
+   "point_ids": [
+    "p013",
+    "p016"
+   ]
+  },
+  {
+   "id": "e012",
+   "type": "line",
+   "polyline": [
+    [
+     430.41,
+     455.65
+    ],
+    [
+     430.21,
+     380.6
+    ]
+   ],
+   "length_px": 75,
+   "point_ids": [
+    "p029",
+    "p031"
+   ]
+  },
+  {
+   "id": "e013",
+   "type": "line",
+   "polyline": [
+    [
+     979.88,
+     474.31
+    ],
+    [
+     978.4,
+     548.21
+    ]
+   ],
+   "length_px": 73.9,
+   "point_ids": [
+    "p036",
+    "p044"
+   ]
+  },
+  {
+   "id": "e014",
+   "type": "line",
+   "polyline": [
+    [
+     382.48,
+     65.63
+    ],
+    [
+     383.08,
+     0.62
+    ]
+   ],
+   "length_px": 65,
+   "point_ids": [
+    "p003",
+    "p009"
+   ]
+  },
+  {
+   "id": "e015",
+   "type": "line",
+   "polyline": [
+    [
+     384.74,
+     341.87
+    ],
+    [
+     384.85,
+     276.87
+    ]
+   ],
+   "length_px": 65,
+   "point_ids": [
+    "p023",
+    "p026"
+   ]
+  },
+  {
+   "id": "e016",
+   "type": "line",
+   "polyline": [
+    [
+     978.64,
+     0.53
+    ],
+    [
+     977.36,
+     62.02
+    ]
+   ],
+   "length_px": 61.5,
+   "point_ids": [
+    "p006",
+    "p012"
+   ]
+  },
+  {
+   "id": "e017",
+   "type": "line",
+   "polyline": [
+    [
+     482.33,
+     488.08
+    ],
+    [
+     487.28,
+     548.18
+    ]
+   ],
+   "length_px": 60.3,
+   "point_ids": [
+    "p035",
+    "p042"
+   ]
+  },
+  {
+   "id": "e018",
+   "type": "line",
+   "polyline": [
+    [
+     98.48,
+     493.07
+    ],
+    [
+     100.42,
+     548.18
+    ]
+   ],
+   "length_px": 55.1,
+   "point_ids": [
+    "p034",
+    "p039"
+   ]
+  },
+  {
+   "id": "e019",
+   "type": "line",
+   "polyline": [
+    [
+     527.63,
+     140.6
+    ],
+    [
+     521.2,
+     90.72
+    ]
+   ],
+   "length_px": 50.3,
+   "point_ids": [
+    "p010",
+    "p015"
+   ]
+  },
+  {
+   "id": "e020",
+   "type": "line",
+   "polyline": [
+    [
+     381.87,
+     261.61
+    ],
+    [
+     335.62,
+     261.46
+    ]
+   ],
+   "length_px": 46.2,
+   "point_ids": [
+    "p021",
+    "p022"
+   ]
+  },
+  {
+   "id": "e021",
+   "type": "line",
+   "polyline": [
+    [
+     330.24,
+     54.43
+    ],
+    [
+     331.97,
+     99.41
+    ]
+   ],
+   "length_px": 45,
+   "point_ids": [
+    "p007",
+    "p008"
+   ]
+  },
+  {
+   "id": "e022",
+   "type": "line",
+   "polyline": [
+    [
+     379.36,
+     535.06
+    ],
+    [
+     334.35,
+     534.1
+    ]
+   ],
+   "length_px": 45,
+   "point_ids": [
+    "p037",
+    "p038"
+   ]
+  },
+  {
+   "id": "e023",
+   "type": "line",
+   "polyline": [
+    [
+     339.36,
+     340.1
+    ],
+    [
+     383.13,
+     340.65
+    ]
+   ],
+   "length_px": 43.8,
+   "point_ids": [
+    "p026"
+   ]
+  },
+  {
+   "id": "e024",
+   "type": "line",
+   "polyline": [
+    [
+     634.8,
+     419.39
+    ],
+    [
+     633.49,
+     459.38
+    ]
+   ],
+   "length_px": 40,
+   "point_ids": [
+    "p030",
+    "p032"
+   ]
+  }
+ ],
+ "timing_ms": 88,
+ "timing": {
+  "decode_ms": 4.4,
+  "detect_ms": 81.8,
+  "total_ms": 88.3
+ },
+ "_lab": {
+  "detector_input": "/Users/apple/Downloads/Geometry-Intensity-Lab/cache/detector/inputs/2ce54888e855b8152fdde082ddf0b45c4a6c963b99ea8130868495094db0d5ea.png",
+  "cli": "/Users/apple/Downloads/Geometry-Intensity-Lab/third_party/geometry-detect-build/geometry-detect-cli",
+  "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c",
+  "overrides": {}
+ }
+}

@@ -1,0 +1,235 @@
+{
+ "schema": "aixam.geometry.detection.v1",
+ "status": "ok",
+ "image": {
+  "sha256": "4b7d5a2f7e034d1fbdffd8778da9b0a737e53a1767cf3034370aa716cd6b9b4f",
+  "media_type": "image/png",
+  "width": 2592,
+  "height": 1942,
+  "bytes": 1962174
+ },
+ "coordinate_convention": "Source pixels of the decoded image: origin at the outer top-left corner of the first pixel, x grows right, y grows down. Identical to the grid the application shows and measures on.",
+ "transforms": {
+  "orientation": "EXIF orientation applied by the decoder, as a browser displays the file",
+  "processing_scale_x": 0.493827,
+  "processing_scale_y": 0.493821,
+  "resized_for_detection": true,
+  "processing_size": {
+   "width": 1280,
+   "height": 959
+  },
+  "cropped": false,
+  "valid_region": {
+   "x": 0,
+   "y": 0,
+   "w": 2531.25,
+   "h": 1881.25
+  },
+  "note": "Detection may run on a downscaled copy of large images. Every coordinate in this result is already mapped back to the full-resolution source grid. Nothing is cropped; pixels in screenshot borders or padding (valid_region excludes them) are not searched."
+ },
+ "detector": {
+  "name": "opencv-geometry-detect",
+  "version": "2.0.0",
+  "library": "opencv 4.11.0",
+  "pipeline_version": "2.0.0",
+  "role": "preliminary detection assistance",
+  "derived": {
+   "canny_thresholds": {
+    "low": 2.75,
+    "high": 5.5
+   }
+  }
+ },
+ "disclaimer": "Preliminary detection assistance for choosing points. Not validated dimensional inspection: no calibration, no confidence, and not an AIxAM measurement or verdict.",
+ "points": [
+  {
+   "id": "p001",
+   "type": "line_end",
+   "x": 341.89,
+   "y": 1344.66,
+   "priority": "secondary",
+   "rank": 0.619,
+   "edge_ids": [
+    "e002"
+   ]
+  },
+  {
+   "id": "p002",
+   "type": "line_end",
+   "x": 506.81,
+   "y": 1445.26,
+   "priority": "secondary",
+   "rank": 0.619,
+   "edge_ids": [
+    "e002"
+   ]
+  },
+  {
+   "id": "p003",
+   "type": "line_end",
+   "x": 532.56,
+   "y": 1457.33,
+   "priority": "secondary",
+   "rank": 0.608,
+   "edge_ids": [
+    "e004"
+   ]
+  },
+  {
+   "id": "p004",
+   "type": "line_end",
+   "x": 690.8,
+   "y": 1530.87,
+   "priority": "secondary",
+   "rank": 0.608,
+   "edge_ids": [
+    "e004",
+    "e005"
+   ]
+  },
+  {
+   "id": "p005",
+   "type": "line_end",
+   "x": 810.24,
+   "y": 1574.37,
+   "priority": "secondary",
+   "rank": 0.611,
+   "edge_ids": [
+    "e003",
+    "e005"
+   ]
+  },
+  {
+   "id": "p006",
+   "type": "line_end",
+   "x": 985.05,
+   "y": 1624.22,
+   "priority": "secondary",
+   "rank": 0.649,
+   "edge_ids": [
+    "e001",
+    "e003"
+   ]
+  },
+  {
+   "id": "p007",
+   "type": "line_end",
+   "x": 1222.85,
+   "y": 1662.99,
+   "priority": "secondary",
+   "rank": 0.649,
+   "edge_ids": [
+    "e001"
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "e001",
+   "type": "line",
+   "polyline": [
+    [
+     985.05,
+     1624.22
+    ],
+    [
+     1222.85,
+     1662.99
+    ]
+   ],
+   "length_px": 240.9,
+   "point_ids": [
+    "p006",
+    "p007"
+   ]
+  },
+  {
+   "id": "e002",
+   "type": "line",
+   "polyline": [
+    [
+     341.89,
+     1344.66
+    ],
+    [
+     506.81,
+     1445.26
+    ]
+   ],
+   "length_px": 193.2,
+   "point_ids": [
+    "p001",
+    "p002"
+   ]
+  },
+  {
+   "id": "e003",
+   "type": "line",
+   "polyline": [
+    [
+     810.24,
+     1574.37
+    ],
+    [
+     983.79,
+     1622.39
+    ]
+   ],
+   "length_px": 180.1,
+   "point_ids": [
+    "p005",
+    "p006"
+   ]
+  },
+  {
+   "id": "e004",
+   "type": "line",
+   "polyline": [
+    [
+     532.56,
+     1457.33
+    ],
+    [
+     690.8,
+     1530.87
+    ]
+   ],
+   "length_px": 174.5,
+   "point_ids": [
+    "p003",
+    "p004"
+   ]
+  },
+  {
+   "id": "e005",
+   "type": "line",
+   "polyline": [
+    [
+     690.98,
+     1529.4
+    ],
+    [
+     809.49,
+     1573.65
+    ]
+   ],
+   "length_px": 126.5,
+   "point_ids": [
+    "p004",
+    "p005"
+   ]
+  }
+ ],
+ "timing_ms": 237,
+ "timing": {
+  "decode_ms": 53.4,
+  "detect_ms": 166.4,
+  "total_ms": 237.9
+ },
+ "_lab": {
+  "detector_input": "/Users/apple/Downloads/Geometry-Replay-Datasets/isaacsim-images/top/isaacsim-samples/rgb_0143.png",
+  "cli": "/Users/apple/Downloads/Geometry-Intensity-Lab/third_party/geometry-detect-build/geometry-detect-cli",
+  "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c",
+  "overrides": {}
+ }
+}

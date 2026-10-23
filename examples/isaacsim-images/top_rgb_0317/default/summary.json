@@ -1,0 +1,354 @@
+{
+  "image": {
+    "path": "/Users/apple/Downloads/Geometry-Replay-Datasets/isaacsim-images/top/isaacsim-samples/rgb_0317.png",
+    "sha256": "12907f1779559f32c0c83ac25be7c957f10ab45a6912c62b0a003b25b0811f4b",
+    "width": 2592,
+    "height": 1942,
+    "source_mode": "RGBA",
+    "gray_conversion": "BT.601 luma 0.299R+0.587G+0.114B, rounded; alpha ignored (fully opaque)",
+    "presmooth_sigma_px": 0.0
+  },
+  "histogram": {
+    "pixels": 5033664,
+    "min": 7,
+    "max": 206,
+    "empty_bins_inside_range": 0,
+    "count_at_0": 0,
+    "count_at_255": 0,
+    "smoothing": "Gaussian, sigma 2.0 gray levels, zero padding"
+  },
+  "gmm": {
+    "fit": {
+      "k": 4,
+      "weights": [
+        0.024577205162301535,
+        0.08470804600906678,
+        0.20111710520563505,
+        0.6895976436229966
+      ],
+      "means": [
+        133.94511047287466,
+        191.07428117659703,
+        196.24838837803605,
+        199.74750667824406
+      ],
+      "sigmas": [
+        37.21246470739943,
+        4.211183011740716,
+        1.9572654513807144,
+        1.0
+      ],
+      "log_likelihood": -11813194.370664645,
+      "n_pixels": 5033664,
+      "n_iter": 227,
+      "converged": true,
+      "min_sigma": 1.0,
+      "bic": 23626558.48957506,
+      "aic": 23626410.74132929,
+      "n_params": 11
+    },
+    "separation_ashman_d": [
+      [
+        null,
+        2.157,
+        2.364,
+        2.5
+      ],
+      [
+        2.157,
+        null,
+        1.576,
+        2.834
+      ],
+      [
+        2.364,
+        1.576,
+        null,
+        2.251
+      ],
+      [
+        2.5,
+        2.834,
+        2.251,
+        null
+      ]
+    ],
+    "threshold": 2.0,
+    "merge_rule": "hierarchical",
+    "groups": [
+      [
+        0
+      ],
+      [
+        1,
+        2,
+        3
+      ]
+    ],
+    "group_gaussians": [
+      {
+        "weight": 0.024577205162301535,
+        "mean": 133.94511047287466,
+        "sigma": 37.21246470739943
+      },
+      {
+        "weight": 0.9754227948376984,
+        "mean": 198.2728389385079,
+        "sigma": 3.1495173523181195
+      }
+    ],
+    "gray_ranges": [
+      {
+        "group": 0,
+        "lo": 0,
+        "hi": 178
+      },
+      {
+        "group": 1,
+        "lo": 179,
+        "hi": 204
+      },
+      {
+        "group": 0,
+        "lo": 205,
+        "hi": 255
+      }
+    ],
+    "min_posterior": 0.0,
+    "uncertain_gray_values": 0,
+    "sweep": [
+      {
+        "k": 1,
+        "bic": 39262909.27708075,
+        "aic": 39262882.41376334,
+        "log_likelihood": -19631439.20688167,
+        "groups_at_threshold": 1,
+        "converged": true
+      },
+      {
+        "k": 2,
+        "bic": 26203311.8056647,
+        "aic": 26203244.64737117,
+        "log_likelihood": -13101617.323685585,
+        "groups_at_threshold": 1,
+        "converged": true
+      },
+      {
+        "k": 3,
+        "bic": 23869999.615443133,
+        "aic": 23869892.162173484,
+        "log_likelihood": -11934938.081086742,
+        "groups_at_threshold": 1,
+        "converged": true
+      },
+      {
+        "k": 4,
+        "bic": 23626558.48957506,
+        "aic": 23626410.74132929,
+        "log_likelihood": -11813194.370664645,
+        "groups_at_threshold": 2,
+        "converged": true
+      },
+      {
+        "k": 5,
+        "bic": 23626604.97385473,
+        "aic": 23626416.930632845,
+        "log_likelihood": -11813194.465316422,
+        "groups_at_threshold": 2,
+        "converged": true
+      },
+      {
+        "k": 6,
+        "bic": 23613661.174337894,
+        "aic": 23613432.836139888,
+        "log_likelihood": -11806699.418069944,
+        "groups_at_threshold": 3,
+        "converged": true
+      },
+      {
+        "k": 7,
+        "bic": 23612161.036676165,
+        "aic": 23611892.40350204,
+        "log_likelihood": -11805926.20175102,
+        "groups_at_threshold": 2,
+        "converged": true
+      },
+      {
+        "k": 8,
+        "bic": 23599267.17834568,
+        "aic": 23598958.250195436,
+        "log_likelihood": -11799456.125097718,
+        "groups_at_threshold": 3,
+        "converged": true
+      }
+    ]
+  },
+  "minima": {
+    "candidates": [
+      61.0,
+      69.0,
+      75.0,
+      163.0
+    ],
+    "kept": [
+      163.0
+    ],
+    "removed": [
+      {
+        "position": 61.0,
+        "reason": "relative depth 0.001 < 0.2",
+        "value": 286.0256766456027
+      },
+      {
+        "position": 75.0,
+        "reason": "relative depth 0.001 < 0.2",
+        "value": 338.9675172415223
+      },
+      {
+        "position": 69.0,
+        "reason": "relative depth 0.002 < 0.2",
+        "value": 321.4156682156231
+      }
+    ],
+    "thresholds": [
+      163
+    ],
+    "intervals": [
+      [
+        0,
+        163
+      ],
+      [
+        164,
+        255
+      ]
+    ],
+    "interval_pixels": [
+      93787,
+      4939877
+    ],
+    "params": {
+      "min_relative_depth": 0.2,
+      "min_interval_fraction": 0.001
+    }
+  },
+  "methods": {
+    "gmm": {
+      "groups": 2,
+      "regions_removed_by_cleanup": 0,
+      "group_stats": [
+        {
+          "group": 0,
+          "pixels": 113618,
+          "share": 0.0225716297313448,
+          "gray_min": 7,
+          "gray_max": 206,
+          "gray_mean": 129.04068017391612,
+          "gray_std": 34.77888880458497,
+          "connected_regions": 123,
+          "largest_region_px": 5238,
+          "regions_under_50px": 16
+        },
+        {
+          "group": 1,
+          "pixels": 4920046,
+          "share": 0.9774283702686551,
+          "gray_min": 179,
+          "gray_max": 204,
+          "gray_mean": 198.25410290879395,
+          "gray_std": 3.184902917619345,
+          "connected_regions": 11,
+          "largest_region_px": 4920002,
+          "regions_under_50px": 10
+        }
+      ],
+      "boundary_px": 40062,
+      "boundary_share_of_image": 0.007958814891101194,
+      "boundary_step_median": 27.0,
+      "boundary_step_p90": 63.0,
+      "vs_detector": {
+        "tolerance_px": 3.0,
+        "reference_px": 1111,
+        "candidate_px": 40062,
+        "reference_matched": 0.0,
+        "candidate_matched": 0.0,
+        "reference_only_px": 1111,
+        "candidate_only_px": 40062
+      }
+    },
+    "minima": {
+      "groups": 2,
+      "regions_removed_by_cleanup": 0,
+      "group_stats": [
+        {
+          "group": 0,
+          "pixels": 93787,
+          "share": 0.01863195477489161,
+          "gray_min": 7,
+          "gray_max": 163,
+          "gray_mean": 120.02484352842079,
+          "gray_std": 31.55311711075165,
+          "connected_regions": 117,
+          "largest_region_px": 1901,
+          "regions_under_50px": 10
+        },
+        {
+          "group": 1,
+          "pixels": 4939877,
+          "share": 0.9813680452251083,
+          "gray_min": 164,
+          "gray_max": 206,
+          "gray_mean": 198.14741946003917,
+          "gray_std": 3.6059635014519276,
+          "connected_regions": 22,
+          "largest_region_px": 4939768,
+          "regions_under_50px": 21
+        }
+      ],
+      "boundary_px": 39210,
+      "boundary_share_of_image": 0.007789554487546249,
+      "boundary_step_median": 35.0,
+      "boundary_step_p90": 74.0,
+      "vs_detector": {
+        "tolerance_px": 3.0,
+        "reference_px": 1111,
+        "candidate_px": 39210,
+        "reference_matched": 0.0,
+        "candidate_matched": 0.0,
+        "reference_only_px": 1111,
+        "candidate_only_px": 39210
+      }
+    }
+  },
+  "detector": {
+    "status": "ok",
+    "points": 6,
+    "lines": 5,
+    "circles": 0,
+    "line_length_px": 880.6,
+    "resized_for_detection": true,
+    "processing_size": {
+      "width": 1280,
+      "height": 959
+    },
+    "version": "2.0.0",
+    "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c",
+    "rasterized_px": 1111
+  },
+  "gmm_vs_minima_boundaries": {
+    "tolerance_px": 3.0,
+    "reference_px": 40062,
+    "candidate_px": 39210,
+    "reference_matched": 0.9753132644401178,
+    "candidate_matched": 0.997398622800306,
+    "reference_only_px": 989,
+    "candidate_only_px": 102
+  },
+  "timings_ms": {
+    "load": 18.0,
+    "gmm": 677.4,
+    "minima": 0.2,
+    "masks_boundaries": 638.9,
+    "detector": 988.7
+  }
+}

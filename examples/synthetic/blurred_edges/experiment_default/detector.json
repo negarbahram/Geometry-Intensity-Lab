@@ -1,0 +1,184 @@
+{
+ "schema": "aixam.geometry.detection.v1",
+ "status": "ok",
+ "image": {
+  "sha256": "5f368fd509ae87e1a56b07a8a25021b47a7176dd5b1e9a4aa74cf2786f5a26e3",
+  "media_type": "image/png",
+  "width": 400,
+  "height": 300,
+  "bytes": 79324
+ },
+ "coordinate_convention": "Source pixels of the decoded image: origin at the outer top-left corner of the first pixel, x grows right, y grows down. Identical to the grid the application shows and measures on.",
+ "transforms": {
+  "orientation": "EXIF orientation applied by the decoder, as a browser displays the file",
+  "processing_scale_x": 1,
+  "processing_scale_y": 1,
+  "resized_for_detection": false,
+  "processing_size": {
+   "width": 400,
+   "height": 300
+  },
+  "cropped": false,
+  "valid_region": {
+   "x": 0,
+   "y": 0,
+   "w": 400,
+   "h": 300
+  },
+  "note": "Detection may run on a downscaled copy of large images. Every coordinate in this result is already mapped back to the full-resolution source grid. Nothing is cropped; pixels in screenshot borders or padding (valid_region excludes them) are not searched."
+ },
+ "detector": {
+  "name": "opencv-geometry-detect",
+  "version": "2.0.0",
+  "library": "opencv 4.11.0",
+  "pipeline_version": "2.0.0",
+  "role": "preliminary detection assistance",
+  "derived": {
+   "canny_thresholds": {
+    "low": 4.5,
+    "high": 9
+   }
+  }
+ },
+ "disclaimer": "Preliminary detection assistance for choosing points. Not validated dimensional inspection: no calibration, no confidence, and not an AIxAM measurement or verdict.",
+ "points": [
+  {
+   "id": "p001",
+   "type": "intersection",
+   "x": 89.19,
+   "y": 73.83,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e001",
+    "e003"
+   ]
+  },
+  {
+   "id": "p002",
+   "type": "intersection",
+   "x": 242.61,
+   "y": 120.32,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e001",
+    "e004"
+   ]
+  },
+  {
+   "id": "p003",
+   "type": "intersection",
+   "x": 56.67,
+   "y": 178.94,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e002",
+    "e003"
+   ]
+  },
+  {
+   "id": "p004",
+   "type": "intersection",
+   "x": 209.95,
+   "y": 225.21,
+   "priority": "primary",
+   "rank": 1,
+   "edge_ids": [
+    "e002",
+    "e004"
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "e001",
+   "type": "line",
+   "polyline": [
+    [
+     240.97,
+     119.82
+    ],
+    [
+     89.61,
+     73.96
+    ]
+   ],
+   "length_px": 158.2,
+   "point_ids": [
+    "p001",
+    "p002"
+   ]
+  },
+  {
+   "id": "e002",
+   "type": "line",
+   "polyline": [
+    [
+     58.82,
+     179.59
+    ],
+    [
+     210.24,
+     225.3
+    ]
+   ],
+   "length_px": 158.2,
+   "point_ids": [
+    "p003",
+    "p004"
+   ]
+  },
+  {
+   "id": "e003",
+   "type": "line",
+   "polyline": [
+    [
+     89.9,
+     71.55
+    ],
+    [
+     57.06,
+     177.69
+    ]
+   ],
+   "length_px": 111.1,
+   "point_ids": [
+    "p001",
+    "p003"
+   ]
+  },
+  {
+   "id": "e004",
+   "type": "line",
+   "polyline": [
+    [
+     209.75,
+     225.85
+    ],
+    [
+     242.31,
+     121.26
+    ]
+   ],
+   "length_px": 109.5,
+   "point_ids": [
+    "p002",
+    "p004"
+   ]
+  }
+ ],
+ "timing_ms": 12,
+ "timing": {
+  "decode_ms": 1,
+  "detect_ms": 10.8,
+  "total_ms": 12.3
+ },
+ "_lab": {
+  "detector_input": "/Users/apple/Downloads/Geometry-Intensity-Lab/examples/synthetic/blurred_edges/input.png",
+  "cli": "/Users/apple/Downloads/Geometry-Intensity-Lab/third_party/geometry-detect-build/geometry-detect-cli",
+  "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c",
+  "overrides": {}
+ }
+}

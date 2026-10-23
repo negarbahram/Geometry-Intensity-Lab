@@ -1,0 +1,342 @@
+{
+  "image": {
+    "path": "/Users/apple/Downloads/Geometry-Replay-Datasets/isaacsim-images/top/isaacsim-samples/rgb_0143.png",
+    "sha256": "4b7d5a2f7e034d1fbdffd8778da9b0a737e53a1767cf3034370aa716cd6b9b4f",
+    "width": 2592,
+    "height": 1942,
+    "source_mode": "RGBA",
+    "gray_conversion": "BT.601 luma 0.299R+0.587G+0.114B, rounded; alpha ignored (fully opaque)",
+    "presmooth_sigma_px": 0.0
+  },
+  "histogram": {
+    "pixels": 5033664,
+    "min": 5,
+    "max": 205,
+    "empty_bins_inside_range": 0,
+    "count_at_0": 0,
+    "count_at_255": 0,
+    "smoothing": "Gaussian, sigma 2.0 gray levels, zero padding"
+  },
+  "gmm": {
+    "fit": {
+      "k": 4,
+      "weights": [
+        0.023775031973982574,
+        0.08760061269793092,
+        0.21641049109389723,
+        0.6722138642341893
+      ],
+      "means": [
+        133.39645233058096,
+        191.09029908365568,
+        196.44242997023943,
+        199.76812811776745
+      ],
+      "sigmas": [
+        38.07097423748682,
+        4.3645173517736895,
+        1.9972026960134512,
+        1.0118521855129452
+      ],
+      "log_likelihood": -11912749.432251811,
+      "n_pixels": 5033664,
+      "n_iter": 133,
+      "converged": true,
+      "min_sigma": 1.0,
+      "bic": 23825668.61274939,
+      "aic": 23825520.864503622,
+      "n_params": 11
+    },
+    "separation_ashman_d": [
+      [
+        null,
+        2.129,
+        2.339,
+        2.465
+      ],
+      [
+        2.129,
+        null,
+        1.577,
+        2.739
+      ],
+      [
+        2.339,
+        1.577,
+        null,
+        2.101
+      ],
+      [
+        2.465,
+        2.739,
+        2.101,
+        null
+      ]
+    ],
+    "threshold": 2.0,
+    "merge_rule": "hierarchical",
+    "groups": [
+      [
+        0
+      ],
+      [
+        1,
+        2,
+        3
+      ]
+    ],
+    "group_gaussians": [
+      {
+        "weight": 0.023775031973982574,
+        "mean": 133.39645233058096,
+        "sigma": 38.07097423748682
+      },
+      {
+        "weight": 0.9762249680260174,
+        "mean": 198.25218747080254,
+        "sigma": 3.195272394481114
+      }
+    ],
+    "gray_ranges": [
+      {
+        "group": 0,
+        "lo": 0,
+        "hi": 178
+      },
+      {
+        "group": 1,
+        "lo": 179,
+        "hi": 205
+      },
+      {
+        "group": 0,
+        "lo": 206,
+        "hi": 255
+      }
+    ],
+    "min_posterior": 0.0,
+    "uncertain_gray_values": 0,
+    "sweep": [
+      {
+        "k": 1,
+        "bic": 39232799.07164244,
+        "aic": 39232772.20832503,
+        "log_likelihood": -19616384.104162514,
+        "groups_at_threshold": 1,
+        "converged": true
+      },
+      {
+        "k": 2,
+        "bic": 26259412.77100244,
+        "aic": 26259345.61270891,
+        "log_likelihood": -13129667.806354456,
+        "groups_at_threshold": 1,
+        "converged": true
+      },
+      {
+        "k": 3,
+        "bic": 24086890.86836051,
+        "aic": 24086783.41509086,
+        "log_likelihood": -12043383.70754543,
+        "groups_at_threshold": 1,
+        "converged": true
+      },
+      {
+        "k": 4,
+        "bic": 23825668.61274939,
+        "aic": 23825520.864503622,
+        "log_likelihood": -11912749.432251811,
+        "groups_at_threshold": 2,
+        "converged": true
+      },
+      {
+        "k": 5,
+        "bic": 23825478.112553794,
+        "aic": 23825290.069331907,
+        "log_likelihood": -11912631.034665953,
+        "groups_at_threshold": 2,
+        "converged": true
+      },
+      {
+        "k": 6,
+        "bic": 23807499.557729185,
+        "aic": 23807271.21953118,
+        "log_likelihood": -11903618.60976559,
+        "groups_at_threshold": 2,
+        "converged": true
+      },
+      {
+        "k": 7,
+        "bic": 23807383.035168346,
+        "aic": 23807114.40199422,
+        "log_likelihood": -11903537.20099711,
+        "groups_at_threshold": 2,
+        "converged": true
+      },
+      {
+        "k": 8,
+        "bic": 23794676.228599764,
+        "aic": 23794367.30044952,
+        "log_likelihood": -11897160.65022476,
+        "groups_at_threshold": 3,
+        "converged": true
+      }
+    ]
+  },
+  "minima": {
+    "candidates": [
+      72.0,
+      160.0
+    ],
+    "kept": [
+      160.0
+    ],
+    "removed": [
+      {
+        "position": 72.0,
+        "reason": "relative depth 0.001 < 0.2",
+        "value": 321.47112721908013
+      }
+    ],
+    "thresholds": [
+      160
+    ],
+    "intervals": [
+      [
+        0,
+        160
+      ],
+      [
+        161,
+        255
+      ]
+    ],
+    "interval_pixels": [
+      87494,
+      4946170
+    ],
+    "params": {
+      "min_relative_depth": 0.2,
+      "min_interval_fraction": 0.001
+    }
+  },
+  "methods": {
+    "gmm": {
+      "groups": 2,
+      "regions_removed_by_cleanup": 0,
+      "group_stats": [
+        {
+          "group": 0,
+          "pixels": 110323,
+          "share": 0.021917036973465056,
+          "gray_min": 5,
+          "gray_max": 178,
+          "gray_mean": 128.59782638253128,
+          "gray_std": 35.70337707509442,
+          "connected_regions": 144,
+          "largest_region_px": 3968,
+          "regions_under_50px": 37
+        },
+        {
+          "group": 1,
+          "pixels": 4923341,
+          "share": 0.978082963026535,
+          "gray_min": 179,
+          "gray_max": 205,
+          "gray_mean": 198.23651398511703,
+          "gray_std": 3.2224414290590935,
+          "connected_regions": 12,
+          "largest_region_px": 4923324,
+          "regions_under_50px": 11
+        }
+      ],
+      "boundary_px": 40239,
+      "boundary_share_of_image": 0.007993978143952397,
+      "boundary_step_median": 27.0,
+      "boundary_step_p90": 62.0,
+      "vs_detector": {
+        "tolerance_px": 3.0,
+        "reference_px": 1094,
+        "candidate_px": 40239,
+        "reference_matched": 0.016453382084095063,
+        "candidate_matched": 0.00039762419543229205,
+        "reference_only_px": 1076,
+        "candidate_only_px": 40223
+      }
+    },
+    "minima": {
+      "groups": 2,
+      "regions_removed_by_cleanup": 0,
+      "group_stats": [
+        {
+          "group": 0,
+          "pixels": 87494,
+          "share": 0.017381772005441762,
+          "gray_min": 5,
+          "gray_max": 160,
+          "gray_mean": 117.69560198413606,
+          "gray_std": 32.02545804243341,
+          "connected_regions": 125,
+          "largest_region_px": 1770,
+          "regions_under_50px": 20
+        },
+        {
+          "group": 1,
+          "pixels": 4946170,
+          "share": 0.9826182279945582,
+          "gray_min": 161,
+          "gray_max": 205,
+          "gray_mean": 198.107949383058,
+          "gray_std": 3.745688094057403,
+          "connected_regions": 25,
+          "largest_region_px": 4946099,
+          "regions_under_50px": 24
+        }
+      ],
+      "boundary_px": 38897,
+      "boundary_share_of_image": 0.00772737314210881,
+      "boundary_step_median": 36.0,
+      "boundary_step_p90": 77.0,
+      "vs_detector": {
+        "tolerance_px": 3.0,
+        "reference_px": 1094,
+        "candidate_px": 38897,
+        "reference_matched": 0.0,
+        "candidate_matched": 0.0,
+        "reference_only_px": 1094,
+        "candidate_only_px": 38897
+      }
+    }
+  },
+  "detector": {
+    "status": "ok",
+    "points": 7,
+    "lines": 5,
+    "circles": 0,
+    "line_length_px": 915.2,
+    "resized_for_detection": true,
+    "processing_size": {
+      "width": 1280,
+      "height": 959
+    },
+    "version": "2.0.0",
+    "commit": "4ca9cf58e9cc73f3c8bde9b64aab69b38c9f077c",
+    "rasterized_px": 1094
+  },
+  "gmm_vs_minima_boundaries": {
+    "tolerance_px": 3.0,
+    "reference_px": 40239,
+    "candidate_px": 38897,
+    "reference_matched": 0.9695817490494296,
+    "candidate_matched": 0.9996914929171915,
+    "reference_only_px": 1224,
+    "candidate_only_px": 12
+  },
+  "timings_ms": {
+    "load": 18.7,
+    "gmm": 903.3,
+    "minima": 0.2,
+    "masks_boundaries": 702.5,
+    "detector": 644.1
+  }
+}
