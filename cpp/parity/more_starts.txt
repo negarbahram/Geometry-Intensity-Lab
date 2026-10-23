@@ -1,0 +1,16 @@
+The three default-settings cases where Python and C++ picked different EM optima (K = 4, 5 starts): do both reach
+the same best fit with more random starts? LL = log-likelihood (higher is better). Random starts 2..n use different
+generators by design (NumPy PCG64 vs std::mt19937_64); start 1 is identical.
+Pic_2026_10_15_125226_3.bmp    starts   5  Python LL    -2332942.9 means [21.5, 21.8, 51.2, 108.1]  |  C++ LL    -2333224.7 means [21.6, 50.8, 51.2, 113.5]  |  rel diff 1.2e-04
+Pic_2026_10_15_125226_3.bmp    starts  20  Python LL    -2311841.9 means [21.5, 51.1, 103.2, 255.0]  |  C++ LL    -2311841.9 means [21.5, 51.1, 103.2, 255.0]  |  rel diff 1.4e-09
+Pic_2026_10_15_125226_3.bmp    starts  50  Python LL    -2311841.9 means [21.5, 51.1, 103.2, 255.0]  |  C++ LL    -2311841.9 means [21.5, 51.1, 103.2, 255.0]  |  rel diff 7.0e-10
+rgb_0046.png                   starts   5  Python LL   -19556224.1 means [114.8, 178.4, 197.3, 211.0]  |  C++ LL   -19568627.4 means [126.9, 195.2, 198.9, 211.2]  |  rel diff 6.3e-04
+rgb_0046.png                   starts  20  Python LL   -19556224.0 means [114.9, 178.4, 197.3, 211.0]  |  C++ LL   -19568627.4 means [126.9, 195.2, 198.9, 211.2]  |  rel diff 6.3e-04
+rgb_0046.png                   starts  50  Python LL   -19556224.0 means [114.9, 178.4, 197.3, 211.0]  |  C++ LL   -19556224.0 means [114.9, 178.4, 197.3, 211.0]  |  rel diff 2.3e-10
+rgb_0137.png                   starts   5  Python LL   -19673293.1 means [73.0, 158.8, 197.2, 211.1]  |  C++ LL   -19622720.2 means [92.4, 141.2, 195.3, 197.2]  |  rel diff 2.6e-03
+rgb_0137.png                   starts  20  Python LL   -19622720.3 means [92.4, 141.2, 195.3, 197.2]  |  C++ LL   -19557659.2 means [127.0, 195.0, 198.7, 211.1]  |  rel diff 3.3e-03
+rgb_0137.png                   starts  50  Python LL   -19622720.3 means [92.4, 141.2, 195.3, 197.2]  |  C++ LL   -19524979.8 means [114.8, 178.4, 197.2, 210.8]  |  rel diff 5.0e-03
+
+Check of the C++ 50-start fit on rgb_0137.png with the Python code:
+  Python log-likelihood of the C++ parameters: -19524979.7710  (C++ reported -19524979.7710, rel diff 1.9e-16)
+  Python EM restarted from them: LL -19524979.7441 after 2 iteration(s), converged True, max mean change 3.07e-03 -> a genuine maximum the Python starts did not reach

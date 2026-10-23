@@ -1,6 +1,7 @@
 """Local experiment interface: python app/server.py [--port 8765]  ->  http://127.0.0.1:8765
 
-Standard library HTTP server; all processing is in intensity_lab. Binds to 127.0.0.1 only.
+Standard library HTTP server. Intensity processing runs in the C++ core (intensity_lab.engine); this server only passes
+settings to it, draws its results and adds the detector comparison. Binds to 127.0.0.1 only.
 """
 from __future__ import annotations
 
@@ -13,39 +14,34 @@ import time
 import traceback
 import uuid
 from collections import OrderedDict
-from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from intensity_lab import detector, experiment, imageio, plots  # noqa: E402
+from intensity_lab import detector, engine, experiment, plots  # noqa: E402
 
 STATIC = Path(__file__).resolve().parent / "static"
 OUTPUTS = ROOT / "outputs"
 RUNS: "OrderedDict[str, dict]" = OrderedDict()     # run id -> {"result", "images", "figures"}
-IMAGES: "OrderedDict[str, imageio.LoadedImage]" = OrderedDict()
 LOCK = threading.Lock()
 
 
-def _loaded(s: experiment.Settings) -> imageio.LoadedImage:
-    p = imageio.resolve(s.dataset, s.image)
-    with LOCK:
-        if str(p) in IMAGES:
-            IMAGES.move_to_end(str(p))
-            return IMAGES[str(p)]
-    img = imageio.load(p)
-    with LOCK:
-        IMAGES[str(p)] = img
-        while len(IMAGES) > 4:
-            IMAGES.popitem(last=False)
-    return img
+def config() -> dict:
+    """Datasets, defaults and engine status. When the C++ core is missing the interface shows why and cannot run."""
+    info = {"engine": experiment.engine_info(), "engine_available": engine.available(), "engine_error": None,
+            "detector_available": detector.available(), "saved": saved_runs(), "datasets": {}, "defaults": None}
+    try:
+        info["defaults"] = engine.defaults()
+        info["datasets"] = {d: engine.list_images(d) for d in engine.DATASETS}
+    except engine.EngineError as e:
+        info["engine_available"], info["engine_error"] = False, str(e)
+    return info
 
 
 def do_run(settings: dict) -> dict:
-    s = experiment.Settings.from_dict(settings)
-    r = experiment.run(s, _loaded(s))
+    r = experiment.run(settings)
     rid = uuid.uuid4().hex[:12]
     entry = {"result": r, "images": experiment.images(r, display=True), "figures": experiment.figures(r), "png": {}}
     with LOCK:
@@ -53,7 +49,7 @@ def do_run(settings: dict) -> dict:
         while len(RUNS) > 6:
             RUNS.popitem(last=False)
     return {"run_id": rid, "summary": experiment.summary(r), "images": sorted(entry["images"]),
-            "figures": sorted(entry["figures"]), "settings": asdict(s)}
+            "figures": sorted(entry["figures"]), "settings": r.settings}
 
 
 def image_png(rid: str, name: str) -> bytes | None:
@@ -76,9 +72,9 @@ def do_save(rid: str, label: str) -> str:
     if e is None:
         raise KeyError("run expired: run it again before saving")
     r = e["result"]
-    stem = re.sub(r"[^A-Za-z0-9_.-]+", "_", Path(r.settings.image).stem)[:40]
+    stem = re.sub(r"[^A-Za-z0-9_.-]+", "_", Path(r.settings["image"]).stem)[:40]
     tag = re.sub(r"[^A-Za-z0-9_-]+", "_", label)[:40]
-    name = f"{time.strftime('%Y%m%d-%H%M%S')}_{r.settings.dataset or 'file'}_{stem}" + (f"_{tag}" if tag else "")
+    name = f"{time.strftime('%Y%m%d-%H%M%S')}_{r.settings['dataset'] or 'file'}_{stem}" + (f"_{tag}" if tag else "")
     return str(experiment.save(r, OUTPUTS / name))
 
 
@@ -109,9 +105,7 @@ class Handler(BaseHTTPRequestHandler):
             if path in ("/", "/index.html"):
                 return self._send(200, (STATIC / "index.html").read_bytes(), "text/html; charset=utf-8")
             if path == "/api/config":
-                return self._json({"datasets": {d: imageio.list_images(d) for d in imageio.DATASETS},
-                                   "defaults": asdict(experiment.Settings()),
-                                   "detector_available": detector.available(), "saved": saved_runs()})
+                return self._json(config())
             m = re.fullmatch(r"/api/image/([0-9a-f]+)/([a-z_]+)\.png", path)
             if m:
                 png = image_png(m.group(1), m.group(2))
@@ -129,7 +123,10 @@ class Handler(BaseHTTPRequestHandler):
         try:
             body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
             if path == "/api/run":
-                return self._json(do_run(body["settings"]))
+                try:
+                    return self._json(do_run(body["settings"]))
+                except engine.EngineError as e:                 # no fallback: say what failed
+                    return self._json({"error": str(e), "engine_error": True}, 500)
             if path == "/api/save":
                 return self._json({"saved_to": do_save(body["run_id"], body.get("label", "")), "saved": saved_runs()})
             return self._json({"error": "not found"}, 404)
@@ -144,6 +141,7 @@ def main():
     a = ap.parse_args()
     srv = ThreadingHTTPServer(("127.0.0.1", a.port), Handler)
     print(f"Geometry Intensity Lab: http://127.0.0.1:{a.port}  (Ctrl+C to stop)")
+    print(f"Processing engine: {engine.NAME} at {engine.CLI}" + ("" if engine.available() else "  -- NOT BUILT"))
     try:
         srv.serve_forever()
     except KeyboardInterrupt:

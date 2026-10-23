@@ -1,5 +1,8 @@
 # Geometry Intensity Lab — implementation plan
 
+> Original plan. The processing described here has since been moved to the C++ core (`cpp/`); the Python package keeps
+> only the interface, plots and detector comparison (see `README.md`).
+
 Standalone prototype for three experiments: histogram-based intensity grouping, intensity region masks, and region-boundary
 "wireframes" compared with the existing AIxAM detector. Nothing in the AIxAM repository is modified.
 
