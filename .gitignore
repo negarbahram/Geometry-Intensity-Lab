@@ -7,3 +7,5 @@ outputs/
 examples_run.log
 cpp/third_party/
 cpp/build/
+.idea/
+.DS_Store

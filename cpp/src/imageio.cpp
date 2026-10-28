@@ -104,13 +104,16 @@ LoadedImage load(const std::string& path) {
 }
 
 cv::Mat presmooth(const cv::Mat& gray, double sigma) {
-  if (sigma <= 0) return gray;
+  if (sigma <= 0)
+    return gray;
   // scipy _gaussian_kernel1d: radius = int(truncate * sigma + 0.5), weights exp(-0.5 x^2 / sigma^2), normalised.
   int radius = static_cast<int>(4.0 * sigma + 0.5);
   std::vector<double> w(2 * radius + 1);
   double sum = 0;
-  for (int i = -radius; i <= radius; i++) sum += (w[i + radius] = std::exp(-0.5 / (sigma * sigma) * i * i));
-  for (double& v : w) v /= sum;
+  for (int i = -radius; i <= radius; i++)
+    sum += (w[i + radius] = std::exp(-0.5 / (sigma * sigma) * i * i));
+  for (double& v : w)
+    v /= sum;
   const double* fw = w.data() + radius;     // centre
 
   int H = gray.rows, W = gray.cols;
@@ -120,32 +123,40 @@ cv::Mat presmooth(const cv::Mat& gray, double sigma) {
   // tmp = c[0]*w[0]; for j = r..1: tmp += (c[-j] + c[+j]) * w[j], and "nearest" (replicate) borders.
   cv::Mat a(H, W, CV_64F), b(H, W, CV_64F);
   std::vector<double> line;
+
   line.resize(static_cast<size_t>(H + 2 * radius));
   for (int x = 0; x < W; x++) {
-    for (int y = -radius; y < H + radius; y++) line[y + radius] = src.at<double>(std::clamp(y, 0, H - 1), x);
+    for (int y = -radius; y < H + radius; y++)
+        line[y + radius] = src.at<double>(std::clamp(y, 0, H - 1), x);
     for (int y = 0; y < H; y++) {
       const double* c = line.data() + y + radius;
       double t = c[0] * fw[0];
-      for (int j = -radius; j < 0; j++) t += (c[j] + c[-j]) * fw[j];
+      for (int j = -radius; j < 0; j++)
+        t += (c[j] + c[-j]) * fw[j];
       a.at<double>(y, x) = t;
     }
   }
+
   line.resize(static_cast<size_t>(W + 2 * radius));
   for (int y = 0; y < H; y++) {
     const double* row = a.ptr<double>(y);
-    for (int x = -radius; x < W + radius; x++) line[x + radius] = row[std::clamp(x, 0, W - 1)];
+    for (int x = -radius; x < W + radius; x++)
+        line[x + radius] = row[std::clamp(x, 0, W - 1)];
     double* out = b.ptr<double>(y);
     for (int x = 0; x < W; x++) {
       const double* c = line.data() + x + radius;
       double t = c[0] * fw[0];
-      for (int j = -radius; j < 0; j++) t += (c[j] + c[-j]) * fw[j];
+      for (int j = -radius; j < 0; j++)
+        t += (c[j] + c[-j]) * fw[j];
       out[x] = t;
     }
   }
+
   std::fesetround(FE_TONEAREST);
   cv::Mat g(H, W, CV_8UC1);
   for (int y = 0; y < H; y++)
-    for (int x = 0; x < W; x++) g.at<uint8_t>(y, x) = static_cast<uint8_t>(std::clamp(rint_even(b.at<double>(y, x)), 0.0, 255.0));
+    for (int x = 0; x < W; x++)
+        g.at<uint8_t>(y, x) = static_cast<uint8_t>(std::clamp(rint_even(b.at<double>(y, x)), 0.0, 255.0));
   return g;
 }
 
